@@ -26,13 +26,28 @@ typedef struct segment_command		t_seg32;
 typedef struct section_64			t_sect64;
 typedef struct section				t_sect32;
 
-typedef struct				s_ndata
+typedef struct		s_ndata
 {
 	t_lc		*lc;
 	uint32_t	ncmds;
 	uint32_t	n_value;
 	uint8_t		n_type;
 	uint8_t		n_sect;
-}							t_ndata;
+}					t_ndata;
 
+/*
+**	get_type.c
+*/
+char				get_type(void *array, uint32_t i, void *ptr, int is_64);
+
+/*
+**	sort_nlist.c
+*/
+void				sort_nlist(void *array, char *string_table,
+								uint32_t nsyms, int is_64);
+
+/*
+**	handle_32_64.c
+*/
+void				handle_32_64(char *ptr, int is_64);
 #endif

@@ -20,7 +20,10 @@ CC = clang
 CFLAGS += -Wall -Werror -Wextra
 
 SRC_PATH_NM = ./srcs/
-SRC_NAME_NM = ft_nm.c
+SRC_NAME_NM = ft_nm.c	\
+			  get_type.c	\
+			  handle_32_64.c	\
+			  sort_nlist.c
 
 SRC_PATH_OTOOL = ./srcs/ft_otool/
 SRC_NAME_OTOOL = ft_otool.c
