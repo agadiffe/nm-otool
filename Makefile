@@ -23,6 +23,8 @@ SRC_PATH_NM = ./srcs/
 SRC_NAME_NM = ft_nm.c	\
 			  get_type.c	\
 			  handle_32_64.c	\
+			  handle_fat.c	\
+			  print.c	\
 			  sort_nlist.c
 
 SRC_PATH_OTOOL = ./srcs/ft_otool/

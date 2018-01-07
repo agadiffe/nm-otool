@@ -12,6 +12,14 @@ void	ft_nm(char *ptr)
 	magic_nbr = *(unsigned int *)ptr;
 	if (magic_nbr == MH_MAGIC_64)
 		handle_32_64(ptr, X64);
+	else if (magic_nbr == MH_MAGIC)
+		handle_32_64(ptr, X86);
+	else if (magic_nbr == FAT_MAGIC)
+		handle_fat(ptr, BIG_ENDIAN);
+	else if (magic_nbr == FAT_CIGAM)
+		handle_fat(ptr, LITTLE_ENDIAN);
+	else
+		ft_putendl_fd("Invalid Architecture", 2);
 }
 
 int		main(int ac, char **av)

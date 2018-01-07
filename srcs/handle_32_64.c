@@ -1,51 +1,40 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-static void		handle_symtab(char *ptr, t_symtab *sym, int is_64)
+static void		handle_symtab(t_data *d)
 {
 	uint32_t	i;
-	void		*string_table;
-	void		*array;
 
-	array = ptr + sym->symoff;
-	string_table = ptr + sym->stroff;
+	d->array = d->ptr + d->sym->symoff;
+	d->string_table = d->ptr + d->sym->stroff;
 	i = -1;
-	sort_nlist(array, string_table, sym->nsyms, is_64);
-	while (++i < sym->nsyms)
-	{
-		if (is_64)
-		{
-			ft_putchar(get_type(array, i, ptr, is_64));
-			ft_putchar(' ');
-			ft_putendl(string_table + NLIST64[i].n_un.n_strx);
-		}
-		else
-		{
-			ft_putendl(string_table + NLIST32[i].n_un.n_strx);
-		}
-	}
+	sort_nlist(d);
+	while (++i < d->sym->nsyms)
+		print_32_64(d, i);
 }
 
 void			handle_32_64(char *ptr, int is_64)
 {
 	uint32_t	i;
-	uint32_t	ncmds;
-	t_lc		*lc;
-	t_symtab	*sym;
+	t_data		d;
+	t_lc		*tmp;
 
-	ncmds = is_64 ? ((t_header64 *)ptr)->ncmds : ((t_header32 *)ptr)->ncmds;
-	lc = is_64 ? (void *)ptr + sizeof(t_header64)
-				: (void *)ptr + sizeof(t_header32);
+	d.ptr = ptr;
+	d.is_64 = is_64;
+	d.ncmds = is_64 ? ((t_header64 *)ptr)->ncmds
+						: ((t_header32 *)ptr)->ncmds;
+	d.lc = is_64 ? (void *)ptr + sizeof(t_header64)
+					: (void *)ptr + sizeof(t_header32);
+	tmp = d.lc;
 	i = -1;
-	while (++i < ncmds)
+	while (++i < d.ncmds)
 	{
-		if (lc->cmd == LC_SYMTAB)
+		if (tmp->cmd == LC_SYMTAB)
 		{
-			sym = (t_symtab *)lc;
-			handle_symtab(ptr, sym, is_64);
+			d.sym = (t_symtab *)tmp;
+			handle_symtab(&d);
 			break ;
 		}
-		lc = (void *)lc + lc->cmdsize;
+		tmp = (void *)tmp + tmp->cmdsize;
 	}
 }
-
