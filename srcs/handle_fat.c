@@ -33,20 +33,13 @@ static void	fat_arch(void *ptr, uint32_t n_fatarch, int is_little_endian)
 						|| arch->cputype == CPU_TYPE_X86_64))
 		{
 			if (is_little_endian)
-			{
-				ft_putendl("fat64 little");
 				handle_32_64((void *)ptr + endianness(arch->offset), X64);
-			}
 			else
-			{
-				ft_putendl("fat64 big");
 				handle_32_64((void *)ptr + arch->offset, X64);
-			}
 		}
 		else if (!is64bit() && (endianness(arch->cputype) == CPU_TYPE_I386
 								|| arch->cputype == CPU_TYPE_I386))
 		{
-			ft_putendl("fat32");
 			if (is_little_endian)
 				handle_32_64((void *)ptr + endianness(arch->offset), X86);
 			else

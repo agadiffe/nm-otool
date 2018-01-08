@@ -72,19 +72,11 @@ char		get_type(t_data *d, uint32_t i)
 	unsigned char	c;
 
 	d->n_type = d->is_64 ? NLIST64[i].n_type : NLIST32[i].n_type;
-	if (d->is_64)
-		d->n_value64 = NLIST64[i].n_value;
-	else
-		d->n_value32 = NLIST32[i].n_value;
+	d->n_value = d->is_64 ? NLIST64[i].n_value : NLIST32[i].n_value;
 	d->n_sect = d->is_64 ? NLIST64[i].n_sect : NLIST32[i].n_sect;
 	c = d->n_type & N_TYPE;
 	if (c == N_UNDF)
-	{
-		if (d->is_64)
-			c = d->n_value64 != 0 ? 'c' : 'u';
-		else
-			c = d->n_value32 != 0 ? 'c' : 'u';
-	}
+		c = d->n_value != 0 ? 'c' : 'u';
 	else if (c == N_ABS)
 		c = 'a';
 	else if (c == N_SECT)

@@ -8,8 +8,8 @@
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE
 
-# define X64	16
-# define X86	8
+# define X64	1
+# define X86	0
 
 # define LITTLE_ENDIAN	1
 # define BIG_ENDIAN		0
@@ -41,8 +41,7 @@ typedef struct		s_data
 	t_symtab	*sym;
 	void		*array;
 	char		*string_table;
-	uint32_t	n_value32;
-	uint64_t	n_value64;
+	uint64_t	n_value;
 	uint8_t		n_type;
 	uint8_t		n_sect;
 }					t_data;
