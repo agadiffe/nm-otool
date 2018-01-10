@@ -24,27 +24,19 @@ static void	fat_arch(void *ptr, uint32_t n_fatarch, int is_little_endian)
 {
 	t_arch		*arch;
 	uint32_t	i;
+	uint32_t	offset;
 
 	arch = (void *)ptr + sizeof(t_headerfat);
 	i = -1;
 	while (++i != n_fatarch)
 	{
+		offset = is_little_endian ? endianness(arch->offset) : arch->offset;
 		if (is64bit() && (endianness(arch->cputype) == CPU_TYPE_X86_64
 						|| arch->cputype == CPU_TYPE_X86_64))
-		{
-			if (is_little_endian)
-				handle_32_64((void *)ptr + endianness(arch->offset), X64);
-			else
-				handle_32_64((void *)ptr + arch->offset, X64);
-		}
+			handle_32_64((void *)ptr + offset, X64);
 		else if (!is64bit() && (endianness(arch->cputype) == CPU_TYPE_I386
 								|| arch->cputype == CPU_TYPE_I386))
-		{
-			if (is_little_endian)
-				handle_32_64((void *)ptr + endianness(arch->offset), X86);
-			else
-				handle_32_64((void *)ptr + arch->offset, X86);
-		}
+			handle_32_64((void *)ptr + offset, X86);
 		arch = (void *)arch + sizeof(*arch);
 	}
 }

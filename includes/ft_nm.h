@@ -44,32 +44,30 @@ typedef struct		s_data
 	uint64_t	n_value;
 	uint8_t		n_type;
 	uint8_t		n_sect;
+	uint32_t	cmd;
+	uint32_t	filetype;
+	char		*segname;
+	uint32_t	nsects;
+	void		*sect;
+	void		*seg;
 }					t_data;
 
 /*
-**	get_type.c
+**	nm
 */
 char				get_type(t_data *d, uint32_t i);
-
-/*
-**	sort_nlist.c
-*/
 void				sort_nlist(t_data *d);
+void				print_32_64(t_data *d, uint32_t i);
 
 /*
-**	handle_32_64.c
+**	nm & otool
 */
 void				handle_32_64(char *ptr, int is_64);
-
-/*
-**	handle_fat.c
-*/
 void				handle_fat(char *ptr, int is_little_endian);
 
 /*
-**	print.c
+**	otool
 */
-void				print_32_64(t_data *d, uint32_t i);
-
+void				print_32_64_otool(t_data *d);
 
 #endif

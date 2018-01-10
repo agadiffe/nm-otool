@@ -21,8 +21,7 @@ void			handle_32_64(char *ptr, int is_64)
 
 	d.ptr = ptr;
 	d.is_64 = is_64;
-	d.ncmds = is_64 ? ((t_header64 *)ptr)->ncmds
-						: ((t_header32 *)ptr)->ncmds;
+	d.ncmds = is_64 ? ((t_header64 *)ptr)->ncmds : ((t_header32 *)ptr)->ncmds;
 	d.lc = is_64 ? (void *)ptr + sizeof(t_header64)
 					: (void *)ptr + sizeof(t_header32);
 	tmp = d.lc;
