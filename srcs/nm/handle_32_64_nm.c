@@ -7,6 +7,8 @@ static void		handle_symtab(t_data *d)
 
 	d->array = d->ptr + d->sym->symoff;
 	d->string_table = d->ptr + d->sym->stroff;
+	if ((void *)d->string_table > g_max_addr)
+		ft_error("error data", 2);
 	i = -1;
 	sort_nlist(d);
 	while (++i < d->sym->nsyms)

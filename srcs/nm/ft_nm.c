@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
-static void		ft_nm(char *ptr)
+void			handle_arch(char *ptr)
 {
 	unsigned int	magic_nbr;
 
@@ -15,9 +15,11 @@ static void		ft_nm(char *ptr)
 	else if (magic_nbr == MH_MAGIC)
 		handle_32_64(ptr, X86);
 	else if (magic_nbr == FAT_MAGIC)
-		handle_fat(ptr, BIG_ENDIAN);
+		handle_fat(ptr, B_ENDIAN);
 	else if (magic_nbr == FAT_CIGAM)
-		handle_fat(ptr, LITTLE_ENDIAN);
+		handle_fat(ptr, L_ENDIAN);
+	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
+		handle_ar(ptr);
 	else
 		ft_putendl_fd("Invalid Architecture", 2);
 }
@@ -43,7 +45,8 @@ static int		handle_av(int ac, char **av)
 			return (ft_error_ret("fstat error!", EXIT_FAILURE));
 		if ((ptr = mmap(0, buf.st_size, PROT, MAP, fd, 0)) == MAP_FAILED)
 			return (ft_error_ret("mmap error!", EXIT_FAILURE));
-		ft_nm(ptr);
+		g_max_addr = ptr + buf.st_size;
+		handle_arch(ptr);
 		if (munmap(ptr, buf.st_size) < 0)
 			return (ft_error_ret("munmap error!", EXIT_FAILURE));
 	}

@@ -4,6 +4,8 @@
 #include "loader.h"
 #include "nlist.h"
 #include "fat.h"
+#include "ar.h"
+#include "ranlib.h"
 
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE
@@ -11,13 +13,15 @@
 # define X64	1
 # define X86	0
 
-# define LITTLE_ENDIAN	1
-# define BIG_ENDIAN		0
+# define L_ENDIAN	1
+# define B_ENDIAN	0
 
 # define BASE16		"0123456789abcdef"
 
 # define NLIST64	((t_nlist64 *)d->array)
 # define NLIST32	((t_nlist32 *)d->array)
+
+void		*g_max_addr;
 
 typedef struct load_command			t_lc;
 typedef struct symtab_command		t_symtab;
@@ -25,6 +29,8 @@ typedef struct mach_header_64		t_header64;
 typedef struct mach_header			t_header32;
 typedef struct fat_header			t_headerfat;
 typedef struct fat_arch				t_arch;
+typedef struct ar_hdr				t_ar;
+typedef struct ranlib				t_ranlib;
 typedef struct nlist_64				t_nlist64;
 typedef struct nlist				t_nlist32;
 typedef struct segment_command_64	t_seg64;
@@ -62,8 +68,10 @@ void				print_32_64(t_data *d, uint32_t i);
 /*
 **	nm & otool
 */
+void				handle_arch(char *ptr);
 void				handle_32_64(char *ptr, int is_64);
 void				handle_fat(char *ptr, int is_little_endian);
+void				handle_ar(char *ptr);
 
 /*
 **	otool

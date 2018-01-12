@@ -24,6 +24,7 @@ SRC_NAME_NM = ft_nm.c	\
 			  get_type.c	\
 			  handle_32_64_nm.c	\
 			  handle_fat_nm.c	\
+			  handle_ar.c	\
 			  print_nm.c	\
 			  sort_nlist.c
 
