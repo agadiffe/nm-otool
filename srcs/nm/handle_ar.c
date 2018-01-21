@@ -38,7 +38,7 @@ void		handle_ar(char *ptr)
 	n = get_ar_name_offset(ar);
 	size = *(uint64_t *)((void *)ar + sizeof(t_ar) + n);
 	size = size / sizeof(t_ranlib);
-	ran = (void *)ar + sizeof(t_ar) + n;
+	ran = (void *)ar + sizeof(t_ar) + n + sizeof(uint32_t);
 	i = -1;
 	while (++i < size)
 	{

@@ -91,11 +91,22 @@
  * follow and then the strings themselves.  The ran_strx fields index the
  * string table whose first byte is numbered 0.
  */
+//struct	ranlib {
+//	union {
+//		off_t	ran_strx;	/* string table index of */
+//		char	*ran_name;	/* symbol defined by */
+//	} ran_un;
+//	off_t	ran_off;		/* library member at this offset */
+//};
+
 struct	ranlib {
 	union {
-		off_t	ran_strx;	/* string table index of */
-		char	*ran_name;	/* symbol defined by */
+		uint32_t	ran_strx;	/* string table index of */
+#ifndef __LP64__
+		char		*ran_name;	/* symbol defined by */
+#endif
 	} ran_un;
-	off_t	ran_off;		/* library member at this offset */
+	uint32_t		ran_off;	/* library member at this offset */
 };
+
 #endif /* ! _RANLIB_H_ */
