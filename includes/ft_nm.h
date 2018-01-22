@@ -5,7 +5,6 @@
 #include "nlist.h"
 #include "fat.h"
 #include "ar.h"
-#include "ranlib.h"
 
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE
