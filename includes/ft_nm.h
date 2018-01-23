@@ -9,11 +9,14 @@
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE
 
+# define OTOOL	1
+# define NM		0
+
 # define X64	1
 # define X86	0
 
-# define L_ENDIAN	1
-# define B_ENDIAN	0
+# define B_ENDIAN	1
+# define L_ENDIAN	0
 
 # define BASE16		"0123456789abcdef"
 
@@ -67,10 +70,11 @@ void				print_32_64(t_data *d, uint32_t i);
 /*
 **	nm & otool
 */
-void				handle_arch(char *ptr);
+int					handle_main(int ac, char **av, int is_otool);
+void				handle_arch(char *ptr, char *av);
 void				handle_32_64(char *ptr, int is_64);
 void				handle_fat(char *ptr, int is_little_endian);
-void				handle_ar(char *ptr);
+void				handle_ar(char *ptr, char *av);
 
 /*
 **	otool

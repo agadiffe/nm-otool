@@ -12,21 +12,24 @@ static uint32_t	get_ar_name_offset(t_ar *ar)
 	return (n);
 }
 
-static void		print_ar(t_ar *ar)
+static void		print_ar(t_ar *ar, char *av)
 {
 	char		*tmp;
 	uint32_t	n;
 
+	ft_putstr(av);
+	ft_putchar('(');
 	if ((n = get_ar_name_offset(ar)))
 		ft_putstr((void *)ar + sizeof(t_ar));
 	else
 		ft_putstr(ar->ar_name);
+	ft_putchar(')');
 	ft_putendl(":");
 	tmp = (void *)ar + sizeof(t_ar) + n;
-	handle_arch(tmp);
+	handle_arch(tmp, av);
 }
 
-void			handle_ar(char *ptr)
+void			handle_ar(char *ptr, char *av)
 {
 	t_ar		*ar;
 	uint64_t	size;
@@ -34,12 +37,12 @@ void			handle_ar(char *ptr)
 	ar = (void *)ptr + SARMAG;
 	size = sizeof(t_ar) + ft_atoi(ar->ar_size) + SARMAG;
 	ar = (void *)ptr + size;
-	print_ar(ar);
+	print_ar(ar, av);
 	while ((void *)ar + size < g_max_addr)
 	{
 		ft_putendl("");
 		size = sizeof(t_ar) + ft_atoi(ar->ar_size);
 		ar = (void *)ar + size;
-		print_ar(ar);
+		print_ar(ar, av);
 	}
 }

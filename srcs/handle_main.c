@@ -5,24 +5,26 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
-void			handle_arch(char *ptr)
+void			handle_arch(char *ptr, char *av)
 {
 	unsigned int	magic_nbr;
 
 	magic_nbr = *(unsigned int *)ptr;
-	if (magic_nbr == MH_MAGIC_64)
+	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
 		handle_32_64(ptr, X64);
-	else if (magic_nbr == MH_MAGIC)
+	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
 		handle_32_64(ptr, X86);
 	else if (magic_nbr == FAT_MAGIC)
-		handle_fat(ptr, B_ENDIAN);
-	else if (magic_nbr == FAT_CIGAM)
 		handle_fat(ptr, L_ENDIAN);
+	else if (magic_nbr == FAT_CIGAM)
+		handle_fat(ptr, B_ENDIAN);
+	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
+		handle_ar(ptr, av);
 	else
 		ft_putendl_fd("Invalid Architecture", 2);
 }
 
-static int		handle_av(int ac, char **av)
+int				handle_main(int ac, char **av, int is_otool)
 {
 	int				i;
 	int				fd;
@@ -32,25 +34,23 @@ static int		handle_av(int ac, char **av)
 	i = 0;
 	while (++i < ac)
 	{
-		ft_putstr(av[i]);
-		ft_putendl(":");
+		if (ac != 2 || is_otool)
+		{
+			ft_putstr(av[i]);
+			ft_putendl(":");
+		}
 		if ((fd = open(av[i], O_RDONLY)) < 0)
 			return (ft_error_ret("open error!", EXIT_FAILURE));
 		if (fstat(fd, &buf) < 0)
 			return (ft_error_ret("fstat error!", EXIT_FAILURE));
 		if ((ptr = mmap(0, buf.st_size, PROT, MAP, fd, 0)) == MAP_FAILED)
 			return (ft_error_ret("mmap error!", EXIT_FAILURE));
-		handle_arch(ptr);
+		g_max_addr = (void *)ptr + buf.st_size;
+		handle_arch(ptr, av[i]);
+		if (i + 1 < ac)
+			ft_putendl("");
 		if (munmap(ptr, buf.st_size) < 0)
 			return (ft_error_ret("munmap error!", EXIT_FAILURE));
 	}
 	return (EXIT_SUCCESS);
-}
-
-int				main(int ac, char **av)
-{
-
-	if (ac < 2)
-		return (ft_error_ret("no argument!", EXIT_FAILURE));
-	return (handle_av(ac, av));
 }

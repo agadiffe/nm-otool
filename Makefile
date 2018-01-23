@@ -19,19 +19,22 @@ NAME_OTOOL = ft_otool
 CC = clang
 CFLAGS += -Wall -Werror -Wextra
 
-SRC_PATH_NM = ./srcs/nm/
-SRC_NAME_NM = ft_nm.c	\
+SRC_PATH = ./srcs/
+
+SRC_NAME_NM = main_nm.c	\
 			  get_type.c	\
 			  handle_32_64_nm.c	\
-			  handle_fat_nm.c	\
+			  handle_fat.c	\
 			  handle_ar.c	\
+			  handle_main.c	\
 			  print_nm.c	\
 			  sort_nlist.c
 
-SRC_PATH_OTOOL = ./srcs/otool/
-SRC_NAME_OTOOL = ft_otool.c \
+SRC_NAME_OTOOL = main_otool.c \
 				 handle_32_64_otool.c	\
-				 handle_fat_otool.c	\
+				 handle_ar.c	\
+				 handle_fat.c	\
+				 handle_main.c	\
 				 print_otool.c
 
 OBJ_PATH = ./obj/
@@ -44,8 +47,7 @@ INC_PATH = ./includes/
 INC = $(addprefix -I,$(INC_PATH))
 INC_PATH_MACHO = ./includes/mach-o/
 INC_MACHO = $(addprefix -I,$(INC_PATH_MACHO))
-INC_FILE_NM = $(INC_PATH)$(NAME_NM).h
-INC_FILE_OTOOL = $(INC_PATH)$(NAME_NM).h
+INC_FILE = $(INC_PATH)$(NAME_NM).h
 
 LIBFT_PATH = ./libft/
 LIBFT_NAME = libft.a
@@ -56,13 +58,10 @@ LIBFT_INC = $(addprefix -I,$(LIBFT_INC_PATH))
 # ----------------------------------------------------------------------------
 # OBJS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # ----------------------------------------------------------------------------
-$(OBJ_PATH)%.o: $(SRC_PATH_NM)%.c $(INC_FILE_NM)
+$(OBJ_PATH)%.o: $(SRC_PATH)%.c $(INC_FILE)
 	@mkdir -p $(OBJ_PATH)
 	$(CC) $(CFLAGS) $(LIBFT_INC) $(INC) $(INC_MACHO) -o $@ -c $<
 
-$(OBJ_PATH)%.o: $(SRC_PATH_OTOOL)%.c $(INC_FILE_OTOOL)
-	@mkdir -p $(OBJ_PATH)
-	$(CC) $(CFLAGS) $(LIBFT_INC) $(INC) $(INC_MACHO) -o $@ -c $<
 # ----------------------------------------------------------------------------
 # RULES ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # ----------------------------------------------------------------------------
