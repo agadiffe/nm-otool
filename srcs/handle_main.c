@@ -5,14 +5,32 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
+int				is_not_terminated_string(char *s)
+{
+	while ((void *)s < g_max_addr)
+	{
+		if (*s == '\0')
+			return (0);
+		s++;
+	}
+	return (ft_error_ret("file data error", 1));
+}
+
+int				is_invalid_addr(void *to_check)
+{
+	if (to_check > g_max_addr)
+		return (ft_error_ret("file data error", 1));
+	return (0);
+}
+
 void			handle_arch(char *ptr, char *av)
 {
 	unsigned int	magic_nbr;
 
 	magic_nbr = *(unsigned int *)ptr;
-	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
+	if (magic_nbr == MH_MAGIC_64)
 		handle_32_64(ptr, X64);
-	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
+	else if (magic_nbr == MH_MAGIC)
 		handle_32_64(ptr, X86);
 	else if (magic_nbr == FAT_MAGIC)
 		handle_fat(ptr, L_ENDIAN);
@@ -20,6 +38,8 @@ void			handle_arch(char *ptr, char *av)
 		handle_fat(ptr, B_ENDIAN);
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 		handle_ar(ptr, av);
+	else if (magic_nbr == MH_CIGAM || magic_nbr == MH_CIGAM_64)
+		ft_putendl_fd("Big endian not suported", 2);
 	else
 		ft_putendl_fd("Invalid Architecture", 2);
 }

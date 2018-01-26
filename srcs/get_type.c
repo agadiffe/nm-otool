@@ -1,26 +1,40 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-static int	cmp_sect_name(char *sect, t_data *d, t_lc *lc)
+static int	cmp_sect_name(char *sect, t_data *d, t_lc *lc, int *error)
 {
-	if (d->is_64)
-		return (ft_strcmp(sect, ((t_sect64 *)lc)->sectname));
-	else
-		return (ft_strcmp(sect, ((t_sect32 *)lc)->sectname));
+	char	*s;
+
+	s = d->is_64 ? ((t_sect64 *)lc)->sectname : ((t_sect32 *)lc)->sectname;
+	if (is_not_terminated_string(s))
+	{
+		*error = 1;
+		return (1);
+	}
+	return (ft_strcmp(sect, s));
 }
 
 static int	handle_sect(char *sect, t_data *d, uint8_t *count, t_lc *lc)
 {
 	uint32_t		i;
 	uint32_t		nsects;
+	uint32_t		sect_size;
+	uint32_t		seg_size;
+	int				error;
 
+	error = 0;
+	sect_size = d->is_64 ? sizeof(t_sect64) : sizeof(t_sect32);
+	seg_size = d->is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
+	if (is_invalid_addr((void *)lc + seg_size))
+		return (-1);
 	nsects = d->is_64 ? ((t_seg64 *)lc)->nsects : ((t_seg32 *)lc)->nsects;
-	lc = d->is_64 ? (void *)lc + sizeof(t_seg64)
-					: (void *)lc + sizeof(t_seg32);
+	lc = d->is_64 ? (void *)lc + sizeof(t_seg64) : (void *)lc + sizeof(t_seg32);
 	i = -1;
 	while (++i < nsects)
 	{
-		if (*count == d->n_sect && !cmp_sect_name(sect, d, lc))
+		if (error || is_invalid_addr((void *)lc + sect_size))
+			return (-1);
+		if (*count == d->n_sect && !cmp_sect_name(sect, d, lc, &error))
 			return (1);
 		lc = d->is_64 ? (void *)lc + sizeof(t_sect64)
 						: (void *)lc + sizeof(t_sect32);
@@ -44,10 +58,12 @@ static int	handle_seg(char *sect, t_data *d)
 	{
 		if (tmp->cmd == LC_SEGMENT_64 || tmp->cmd == LC_SEGMENT)
 		{
-			if ((ret = handle_sect(sect, d, &count, tmp)))
+			if ((ret = handle_sect(sect, d, &count, tmp)) != 0)
 				break ;
 		}
 		tmp = (void *)tmp + tmp->cmdsize;
+		if (is_invalid_addr((void *)tmp + sizeof(t_lc)))
+			return (-1);
 	}
 	return (ret);
 }
@@ -55,15 +71,18 @@ static int	handle_seg(char *sect, t_data *d)
 static char	get_type_sect(t_data *d)
 {
 	unsigned char	c;
+	int				ret;
 
-	if (handle_seg(SECT_TEXT, d))
+	if ((ret = handle_seg(SECT_TEXT, d)))
 		c = 't';
-	else if (handle_seg(SECT_DATA, d))
+	else if ((ret = handle_seg(SECT_DATA, d)))
 		c = 'd';
-	else if (handle_seg(SECT_BSS, d))
+	else if ((ret = handle_seg(SECT_BSS, d)))
 		c = 'b';
 	else
 		c = 's';
+	if (ret == -1)
+		return ('!');
 	return (c);
 }
 
@@ -85,7 +104,7 @@ char		get_type(t_data *d, uint32_t i)
 		c = 'i';
 	else
 		c = '?';
-	if (d->n_type & N_EXT && c != '?')
+	if (d->n_type & N_EXT && c != '?' && c != '!')
 		c = ft_toupper(c);
 	return (c);
 }

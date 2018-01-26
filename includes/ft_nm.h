@@ -61,24 +61,26 @@ typedef struct		s_data
 }					t_data;
 
 /*
-**	nm
-*/
-char				get_type(t_data *d, uint32_t i);
-void				sort_nlist(t_data *d);
-void				print_32_64(t_data *d, uint32_t i);
-
-/*
 **	nm & otool
 */
 int					handle_main(int ac, char **av, int is_otool);
 void				handle_arch(char *ptr, char *av);
 void				handle_32_64(char *ptr, int is_64);
-void				handle_fat(char *ptr, int is_little_endian);
+void				handle_fat(char *ptr, int is_big_endian);
 void				handle_ar(char *ptr, char *av);
+int					is_invalid_addr(void *to_check);
+int					is_not_terminated_string(char *s);
+
+/*
+**	nm
+*/
+char				get_type(t_data *d, uint32_t i);
+int					sort_nlist(t_data *d);
+int					print_32_64(t_data *d, uint32_t i);
 
 /*
 **	otool
 */
-void				print_32_64_otool(t_data *d);
+int					print_32_64_otool(t_data *d);
 
 #endif

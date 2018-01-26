@@ -12,21 +12,28 @@ static uint32_t	get_ar_name_offset(t_ar *ar)
 	return (n);
 }
 
-static void		print_ar(t_ar *ar, char *av)
+static int		print_ar(t_ar *ar, char *av)
 {
-	char		*tmp;
+	void		*tmp;
 	uint32_t	n;
 
 	ft_putstr(av);
 	ft_putchar('(');
+	if (is_not_terminated_string(ar->ar_name))
+		return (1);
 	if ((n = get_ar_name_offset(ar)))
+	{
+		if (is_not_terminated_string((void *)ar + sizeof(t_ar)))
+			return (1);
 		ft_putstr((void *)ar + sizeof(t_ar));
+	}
 	else
 		ft_putstr(ar->ar_name);
 	ft_putchar(')');
 	ft_putendl(":");
 	tmp = (void *)ar + sizeof(t_ar) + n;
 	handle_arch(tmp, av);
+	return (0);
 }
 
 void			handle_ar(char *ptr, char *av)
@@ -35,14 +42,18 @@ void			handle_ar(char *ptr, char *av)
 	uint64_t	size;
 
 	ar = (void *)ptr + SARMAG;
-	size = sizeof(t_ar) + ft_atoi(ar->ar_size) + SARMAG;
-	ar = (void *)ptr + size;
-	print_ar(ar, av);
+	if (is_invalid_addr((void *)ar + sizeof(t_ar)))
+		return ;
+	size = 0;
 	while ((void *)ar + size < g_max_addr)
 	{
-		ft_putendl("");
+		if (size)
+			ft_putendl("");
 		size = sizeof(t_ar) + ft_atoi(ar->ar_size);
 		ar = (void *)ar + size;
-		print_ar(ar, av);
+		if (is_invalid_addr((void *)ar + sizeof(t_ar)))
+			return ;
+		if (print_ar(ar, av))
+			return ;
 	}
 }
