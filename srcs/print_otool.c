@@ -30,8 +30,12 @@ static void		print_addr(uint64_t *addr, int is_64)
 static int		handle_print_addr(void *ptr, uint64_t *addr,
 									uint64_t size, int is_64)
 {
-	if (is_invalid_addr((void *)ptr + 16) || is_invalid_addr((void *)addr + 16))
+	if (is_invalid_addr((void *)ptr + size)
+			|| is_invalid_addr((void *)*addr + size))
+	{
+		ft_putendl("here");
 		return (1);
+	}
 	print_addr(addr, is_64);
 	ft_putchar('\t');
 	print_hexdump(ptr, size);

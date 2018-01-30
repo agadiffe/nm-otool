@@ -21,7 +21,7 @@ CFLAGS += -Wall -Werror -Wextra
 
 SRC_PATH = ./srcs/
 
-SRC_NAME_NM = main_nm.c	\
+SRC_NAME_NM = main.c	\
 			  get_type.c	\
 			  handle_32_64_nm.c	\
 			  handle_fat.c	\
@@ -30,7 +30,7 @@ SRC_NAME_NM = main_nm.c	\
 			  print_nm.c	\
 			  sort_nlist.c
 
-SRC_NAME_OTOOL = main_otool.c \
+SRC_NAME_OTOOL = main.c \
 				 handle_32_64_otool.c	\
 				 handle_ar.c	\
 				 handle_fat.c	\

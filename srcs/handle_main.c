@@ -44,7 +44,7 @@ void			handle_arch(char *ptr, char *av)
 		ft_putendl_fd("Invalid Architecture", 2);
 }
 
-int				handle_main(int ac, char **av, int is_otool)
+int				handle_main(int ac, char **av)
 {
 	int				i;
 	int				fd;
@@ -54,11 +54,8 @@ int				handle_main(int ac, char **av, int is_otool)
 	i = 0;
 	while (++i < ac)
 	{
-		if (ac != 2 || is_otool)
-		{
-			ft_putstr(av[i]);
-			ft_putendl(":");
-		}
+		ft_putstr(av[i]);
+		ft_putendl(":");
 		if ((fd = open(av[i], O_RDONLY)) < 0)
 			return (ft_error_ret("open error!", EXIT_FAILURE));
 		if (fstat(fd, &buf) < 0)

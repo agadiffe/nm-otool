@@ -94,8 +94,12 @@ char		get_type(t_data *d, uint32_t i)
 	d->n_value = d->is_64 ? NLIST64[i].n_value : NLIST32[i].n_value;
 	d->n_sect = d->is_64 ? NLIST64[i].n_sect : NLIST32[i].n_sect;
 	c = d->n_type & N_TYPE;
-	if (c == N_UNDF)
+	if (d->n_type & N_STAB)
+		c = '-';
+	else if (c == N_UNDF)
 		c = d->n_value != 0 ? 'c' : 'u';
+	else if (c == N_PBUD)
+		c = 'u';
 	else if (c == N_ABS)
 		c = 'a';
 	else if (c == N_SECT)
@@ -104,7 +108,7 @@ char		get_type(t_data *d, uint32_t i)
 		c = 'i';
 	else
 		c = '?';
-	if (d->n_type & N_EXT && c != '?' && c != '!')
+	if (d->n_type & N_EXT && c != '?' && c != '-' && c != '!')
 		c = ft_toupper(c);
 	return (c);
 }

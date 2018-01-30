@@ -25,8 +25,34 @@ static void		handle_section(t_data *d, char *ptr, int is_64)
 			if (print_32_64_otool(d))
 				return ;
 		}
-		d->sect++;
+		d->sect = is_64 ? d->sect + ((t_sect64 *)d->sect)->size
+					: d->sect + ((t_sect32 *)d->sect)->size;
 	}
+}
+
+static int		handle_segment(t_data *d, char *ptr, int is_64)
+{
+	uint32_t	seg_size;
+
+	seg_size = is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
+	if (is_invalid_addr((void *)d->seg + seg_size))
+		return (1);
+	d->segname = is_64 ? ((t_seg64 *)d->seg)->segname
+					: ((t_seg32 *)d->seg)->segname;
+	if (is_not_terminated_string(d->segname))
+		return (1);
+	if ((d->cmd == LC_SEGMENT_64 || d->cmd == LC_SEGMENT)
+		&& (!ft_strcmp(d->segname, SEG_TEXT) || d->filetype == MH_OBJECT))
+	{
+		d->nsects = is_64 ? ((t_seg64 *)d->seg)->nsects
+						: ((t_seg32 *)d->seg)->nsects;
+		d->sect = is_64 ? d->seg + sizeof(t_seg64) : d->seg + sizeof(t_seg32);
+		handle_section(d, ptr, is_64);
+		return (1);
+	}
+	d->seg = is_64 ? d->seg + ((t_seg64 *)d->seg)->cmdsize
+				: d->seg + ((t_seg32 *)d->seg)->cmdsize;
+	return (0);
 }
 
 static int		fill_data(t_data *d, char *ptr, int is_64)
@@ -51,34 +77,18 @@ void			handle_32_64(char *ptr, int is_64)
 	t_data		d;
 	uint32_t	i;
 	uint32_t	header_size;
-	uint32_t	seg_size;
 
 	if (fill_data(&d, ptr, is_64))
 		return ;
 	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
-	seg_size = is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
+	if (is_invalid_addr((void *)ptr + header_size))
+		return ;
+	d.filetype = is_64 ? ((t_header64 *)ptr)->filetype
+						: ((t_header32 *)ptr)->filetype;
 	i = -1;
 	while (++i < d.ncmds)
 	{
-		if (is_invalid_addr((void *)ptr + header_size)
-				|| is_invalid_addr((void *)d.seg + seg_size))
+		if (handle_segment(&d, ptr, is_64))
 			return ;
-		d.filetype = is_64 ? ((t_header64 *)ptr)->filetype
-							: ((t_header32 *)ptr)->filetype;
-		d.segname = is_64 ? ((t_seg64 *)d.seg)->segname
-							: ((t_seg32 *)d.seg)->segname;
-		if (is_not_terminated_string(d.segname))
-			return ;
-		if ((d.cmd == LC_SEGMENT_64 || d.cmd == LC_SEGMENT)
-			&& (!ft_strcmp(d.segname, SEG_TEXT) || d.filetype == MH_OBJECT))
-		{
-			d.nsects = is_64 ? ((t_seg64 *)d.seg)->nsects
-							: ((t_seg32 *)d.seg)->nsects;
-			d.sect = is_64 ? d.seg + sizeof(t_seg64) : d.seg + sizeof(t_seg32);
-			handle_section(&d, ptr, is_64);
-			break ;
-		}
-		d.seg = is_64 ? d.seg + ((t_seg64 *)d.seg)->cmdsize
-					: d.seg + ((t_seg32 *)d.seg)->cmdsize;
 	}
 }

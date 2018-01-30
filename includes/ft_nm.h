@@ -63,7 +63,7 @@ typedef struct		s_data
 /*
 **	nm & otool
 */
-int					handle_main(int ac, char **av, int is_otool);
+int					handle_main(int ac, char **av);
 void				handle_arch(char *ptr, char *av);
 void				handle_32_64(char *ptr, int is_64);
 void				handle_fat(char *ptr, int is_big_endian);
