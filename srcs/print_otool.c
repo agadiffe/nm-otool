@@ -32,15 +32,22 @@ static int		handle_print_addr(void *ptr, uint64_t *addr,
 {
 	if (is_invalid_addr((void *)ptr + size)
 			|| is_invalid_addr((void *)*addr + size))
-	{
-		ft_putendl("here");
 		return (1);
-	}
 	print_addr(addr, is_64);
 	ft_putchar('\t');
 	print_hexdump(ptr, size);
 	ft_putchar('\n');
 	return (0);
+}
+
+static void		fill_data(t_data *d, void **ptr, uint64_t *addr, uint64_t *size)
+{
+	*ptr = d->is_64 ? d->ptr + swap32(((t_sect64 *)d->sect)->offset, d->swap)
+					: d->ptr + swap32(((t_sect32 *)d->sect)->offset, d->swap);
+	*addr = d->is_64 ? swap64(((t_sect64 *)d->sect)->addr, d->swap)
+					: swap32(((t_sect32 *)d->sect)->addr, d->swap);
+	*size = d->is_64 ? swap64(((t_sect64 *)d->sect)->size, d->swap)
+					: swap32(((t_sect32 *)d->sect)->size, d->swap);
 }
 
 int				print_32_64_otool(t_data *d)
@@ -53,10 +60,7 @@ int				print_32_64_otool(t_data *d)
 	sect_size = d->is_64 ? sizeof(t_sect64) : sizeof(t_sect32);
 	if (is_invalid_addr((void *)d->ptr + sect_size))
 		return (1);
-	ptr = d->is_64 ? d->ptr + ((t_sect64 *)d->sect)->offset
-					: d->ptr + ((t_sect32 *)d->sect)->offset;
-	addr = d->is_64 ? ((t_sect64 *)d->sect)->addr : ((t_sect32 *)d->sect)->addr;
-	size = d->is_64 ? ((t_sect64 *)d->sect)->size : ((t_sect32 *)d->sect)->size;
+	fill_data(d, &ptr, &addr, &size);
 	while (size > 16)
 	{
 		if (handle_print_addr(ptr, &addr, 16, d->is_64))

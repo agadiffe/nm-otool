@@ -8,13 +8,13 @@ static int	cmp_nlist_arg(t_data *d, uint32_t j, int *error)
 
 	if (d->is_64)
 	{
-		s1 = d->string_table + NLIST64[j].n_un.n_strx;
-		s2 = d->string_table + NLIST64[j - 1].n_un.n_strx;
+		s1 = d->string_table + swap32(NLIST64[j].n_un.n_strx, d->swap);
+		s2 = d->string_table + swap32(NLIST64[j - 1].n_un.n_strx, d->swap);
 	}
 	else
 	{
-		s1 = d->string_table + NLIST32[j].n_un.n_strx;
-		s2 = d->string_table + NLIST32[j - 1].n_un.n_strx;
+		s1 = d->string_table + swap32(NLIST32[j].n_un.n_strx, d->swap);
+		s2 = d->string_table + swap32(NLIST32[j - 1].n_un.n_strx, d->swap);
 	}
 	if (is_not_terminated_string(s1) || is_not_terminated_string(s2))
 	{
@@ -48,10 +48,12 @@ int			sort_nlist(t_data *d)
 	uint32_t	i;
 	uint32_t	j;
 	int			error;
+	uint32_t	nsyms;
 
 	i = 1;
 	error = 0;
-	while (i <= d->sym->nsyms - 1)
+	nsyms = swap32(d->sym->nsyms, d->swap);
+	while (i <= nsyms - 1)
 	{
 		j = i;
 		while (j > 0 && cmp_nlist_arg(d, j, &error) < 0)

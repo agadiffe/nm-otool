@@ -15,9 +15,6 @@
 # define X64	1
 # define X86	0
 
-# define B_ENDIAN	1
-# define L_ENDIAN	0
-
 # define BASE16		"0123456789abcdef"
 
 # define NLIST64	((t_nlist64 *)d->array)
@@ -43,7 +40,10 @@ typedef struct section				t_sect32;
 typedef struct		s_data
 {
 	int			is_64;
+	int			swap;
 	char		*ptr;
+	uint32_t	cmd;
+	uint32_t	cmdsize;
 	uint32_t	ncmds;
 	t_lc		*lc;
 	t_symtab	*sym;
@@ -52,7 +52,6 @@ typedef struct		s_data
 	uint64_t	n_value;
 	uint8_t		n_type;
 	uint8_t		n_sect;
-	uint32_t	cmd;
 	uint32_t	filetype;
 	char		*segname;
 	uint32_t	nsects;
@@ -66,10 +65,12 @@ typedef struct		s_data
 int					handle_main(int ac, char **av);
 void				handle_arch(char *ptr, char *av);
 void				handle_32_64(char *ptr, int is_64);
-void				handle_fat(char *ptr, int is_big_endian);
+void				handle_fat(char *ptr);
 void				handle_ar(char *ptr, char *av);
 int					is_invalid_addr(void *to_check);
 int					is_not_terminated_string(char *s);
+uint32_t			swap32(uint32_t value, int swap);
+uint64_t			swap64(uint64_t value, int swap);
 
 /*
 **	nm

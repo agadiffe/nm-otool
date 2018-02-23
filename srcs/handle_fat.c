@@ -1,30 +1,12 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-int			is64bit(void)
-{
-	if (sizeof(void *) == 4)
-		return (0);
-	return (1);
-}
-
-uint32_t	endianness(uint32_t value)
-{
-	uint32_t tmp;
-
-	tmp = 0;
-	tmp |= (value & 0x000000FF) << 24;
-	tmp |= (value & 0x0000FF00) << 8;
-	tmp |= (value & 0x00FF0000) >> 8;
-	tmp |= (value & 0xFF000000) >> 24;
-	return (tmp);
-}
-
-static void	fat_arch(void *ptr, uint32_t n_fatarch, int is_big_endian)
+static void	fat_arch(void *ptr, uint32_t n_fatarch, int swap)
 {
 	t_arch		*arch;
 	uint32_t	i;
 	uint32_t	offset;
+	uint32_t	cpu;
 
 	arch = (void *)ptr + sizeof(t_headerfat);
 	if (is_invalid_addr((void *)arch + sizeof(t_arch)))
@@ -32,28 +14,32 @@ static void	fat_arch(void *ptr, uint32_t n_fatarch, int is_big_endian)
 	i = -1;
 	while (++i != n_fatarch)
 	{
-		offset = is_big_endian ? endianness(arch->offset) : arch->offset;
-		if (is64bit() && (endianness(arch->cputype) == CPU_TYPE_X86_64
-						|| arch->cputype == CPU_TYPE_X86_64))
+		offset = swap32(arch->offset, swap);
+		cpu = swap32(arch->cputype, swap);
+		if (cpu == CPU_TYPE_X86_64)
 			handle_32_64((void *)ptr + offset, X64);
-		else if (!is64bit() && (endianness(arch->cputype) == CPU_TYPE_I386
-								|| arch->cputype == CPU_TYPE_I386))
+		else if (cpu == CPU_TYPE_I386)
 			handle_32_64((void *)ptr + offset, X86);
-		arch = (void *)arch + sizeof(*arch);
+		else
+			ft_putendl("Unknow cpu type");
+		arch = (void *)arch + sizeof(t_arch);
 		if (is_invalid_addr((void *)arch + sizeof(t_arch)))
 			return ;
+		if (i + 1 != n_fatarch)
+			ft_putendl("");
 	}
 }
 
-void	handle_fat(char *ptr, int is_big_endian)
+void	handle_fat(char *ptr)
 {
-	uint32_t	n_fatarch;
+	uint32_t		n_fatarch;
+	unsigned int	magic_nbr;
+	int				swap;
 
+	magic_nbr = *(unsigned int *)ptr;
 	if (is_invalid_addr((void *)ptr + sizeof(t_headerfat)))
 		return ;
-	if (is_big_endian)
-		n_fatarch = endianness(((t_headerfat *)ptr)->nfat_arch);
-	else
-		n_fatarch = ((t_headerfat *)ptr)->nfat_arch;
-	fat_arch(ptr, n_fatarch, is_big_endian);
+	swap = magic_nbr == FAT_CIGAM ? 1 : 0;
+	n_fatarch = swap32(((t_headerfat *)ptr)->nfat_arch, swap);
+	fat_arch(ptr, n_fatarch, swap);
 }

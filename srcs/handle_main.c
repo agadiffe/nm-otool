@@ -28,18 +28,14 @@ void			handle_arch(char *ptr, char *av)
 	unsigned int	magic_nbr;
 
 	magic_nbr = *(unsigned int *)ptr;
-	if (magic_nbr == MH_MAGIC_64)
+	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
 		handle_32_64(ptr, X64);
-	else if (magic_nbr == MH_MAGIC)
+	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
 		handle_32_64(ptr, X86);
-	else if (magic_nbr == FAT_MAGIC)
-		handle_fat(ptr, L_ENDIAN);
-	else if (magic_nbr == FAT_CIGAM)
-		handle_fat(ptr, B_ENDIAN);
+	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM)
+		handle_fat(ptr);
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 		handle_ar(ptr, av);
-	else if (magic_nbr == MH_CIGAM || magic_nbr == MH_CIGAM_64)
-		ft_putendl_fd("Big endian not suported", 2);
 	else
 		ft_putendl_fd("Invalid Architecture", 2);
 }

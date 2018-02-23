@@ -28,6 +28,7 @@ SRC_NAME_NM = main.c	\
 			  handle_ar.c	\
 			  handle_main.c	\
 			  print_nm.c	\
+			  swap.c	\
 			  sort_nlist.c
 
 SRC_NAME_OTOOL = main.c \
@@ -35,6 +36,7 @@ SRC_NAME_OTOOL = main.c \
 				 handle_ar.c	\
 				 handle_fat.c	\
 				 handle_main.c	\
+				 swap.c	\
 				 print_otool.c
 
 OBJ_PATH = ./obj/

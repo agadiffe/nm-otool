@@ -30,7 +30,7 @@ static int	handle_sect(char *sect, t_data *d, uint8_t *count, t_lc *lc)
 	nsects = d->is_64 ? ((t_seg64 *)lc)->nsects : ((t_seg32 *)lc)->nsects;
 	lc = d->is_64 ? (void *)lc + sizeof(t_seg64) : (void *)lc + sizeof(t_seg32);
 	i = -1;
-	while (++i < nsects)
+	while (++i < swap32(nsects, d->swap))
 	{
 		if (error || is_invalid_addr((void *)lc + sect_size))
 			return (-1);
@@ -49,6 +49,7 @@ static int	handle_seg(char *sect, t_data *d)
 	int			ret;
 	uint8_t		count;
 	t_lc		*tmp;
+	uint32_t	cmd;
 
 	count = 1;
 	ret = 0;
@@ -56,12 +57,13 @@ static int	handle_seg(char *sect, t_data *d)
 	i = -1;
 	while (++i < d->ncmds)
 	{
-		if (tmp->cmd == LC_SEGMENT_64 || tmp->cmd == LC_SEGMENT)
+		cmd = swap32(tmp->cmd, d->swap);
+		if (cmd == LC_SEGMENT_64 || cmd == LC_SEGMENT)
 		{
 			if ((ret = handle_sect(sect, d, &count, tmp)) != 0)
 				break ;
 		}
-		tmp = (void *)tmp + tmp->cmdsize;
+		tmp = (void *)tmp + swap32(tmp->cmdsize, d->swap);
 		if (is_invalid_addr((void *)tmp + sizeof(t_lc)))
 			return (-1);
 	}
@@ -91,7 +93,8 @@ char		get_type(t_data *d, uint32_t i)
 	unsigned char	c;
 
 	d->n_type = d->is_64 ? NLIST64[i].n_type : NLIST32[i].n_type;
-	d->n_value = d->is_64 ? NLIST64[i].n_value : NLIST32[i].n_value;
+	d->n_value = d->is_64 ? swap64(NLIST64[i].n_value, d->swap)
+						: swap32(NLIST32[i].n_value, d->swap);
 	d->n_sect = d->is_64 ? NLIST64[i].n_sect : NLIST32[i].n_sect;
 	c = d->n_type & N_TYPE;
 	if (d->n_type & N_STAB)
