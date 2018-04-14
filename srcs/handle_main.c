@@ -40,30 +40,43 @@ void			handle_arch(char *ptr, char *av)
 		ft_putendl_fd("Invalid Architecture", 2);
 }
 
+static int		handle_file(char *av, char **ptr, size_t *st_size)
+{
+	int				fd;
+	struct stat		buf;
+
+	if ((fd = open(av, O_RDONLY)) < 0)
+		return (ft_error_ret("open error!", 1));
+	if (fstat(fd, &buf) < 0)
+		return (ft_error_ret("fstat error!", 1));
+	*st_size = buf.st_size;
+	if ((*ptr = mmap(0, buf.st_size, PROT, MAP, fd, 0)) == MAP_FAILED)
+		return (ft_error_ret("mmap error!", 1));
+	return (0);
+}
+
 int				handle_main(int ac, char **av)
 {
-	int				i;
-	int				fd;
-	char			*ptr;
-	struct stat		buf;
+	int		i;
+	char	*ptr;
+	size_t	st_size;
 
 	i = 0;
 	while (++i < ac)
 	{
 		ft_putstr(av[i]);
 		ft_putendl(":");
-		if ((fd = open(av[i], O_RDONLY)) < 0)
-			return (ft_error_ret("open error!", EXIT_FAILURE));
-		if (fstat(fd, &buf) < 0)
-			return (ft_error_ret("fstat error!", EXIT_FAILURE));
-		if ((ptr = mmap(0, buf.st_size, PROT, MAP, fd, 0)) == MAP_FAILED)
-			return (ft_error_ret("mmap error!", EXIT_FAILURE));
-		g_max_addr = (void *)ptr + buf.st_size;
+		if (handle_file(av[i], &ptr, &st_size))
+			continue ;
+		g_max_addr = (void *)ptr + st_size;
 		handle_arch(ptr, av[i]);
 		if (i + 1 < ac)
 			ft_putendl("");
-		if (munmap(ptr, buf.st_size) < 0)
-			return (ft_error_ret("munmap error!", EXIT_FAILURE));
+		if (munmap(ptr, st_size) < 0)
+		{
+			ft_putendl_fd("munmap error!", 2);
+			continue ;
+		}
 	}
 	return (EXIT_SUCCESS);
 }

@@ -82,6 +82,8 @@ void			handle_32_64(char *ptr, int is_64)
 	uint32_t	i;
 	uint32_t	header_size;
 
+	if (is_invalid_addr((void *)ptr))
+		return ;
 	if (fill_data(&d, ptr, is_64))
 		return ;
 	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);

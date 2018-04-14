@@ -50,6 +50,8 @@ void			handle_32_64(char *ptr, int is_64)
 	t_data			d;
 	t_lc			*tmp;
 
+	if (is_invalid_addr((void *)ptr))
+		return ;
 	if (fill_data(&d, ptr, is_64))
 		return ;
 	tmp = d.lc;
