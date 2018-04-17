@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int				is_not_terminated_string(char *s)
 {
@@ -52,6 +53,7 @@ static int		handle_file(char *av, char **ptr, size_t *st_size)
 	*st_size = buf.st_size;
 	if ((*ptr = mmap(0, buf.st_size, PROT, MAP, fd, 0)) == MAP_FAILED)
 		return (ft_error_ret("mmap error!", 1));
+	close(fd);
 	return (0);
 }
 

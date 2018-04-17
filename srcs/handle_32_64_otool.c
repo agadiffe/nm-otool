@@ -32,7 +32,6 @@ static void		handle_section(t_data *d, char *ptr, int is_64)
 static int		handle_segment(t_data *d, char *ptr, int is_64)
 {
 	uint32_t	seg_size;
-	uint32_t	cmd;
 
 	seg_size = is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
 	if (is_invalid_addr((void *)d->seg + seg_size))
@@ -41,15 +40,16 @@ static int		handle_segment(t_data *d, char *ptr, int is_64)
 					: ((t_seg32 *)d->seg)->segname;
 	if (is_not_terminated_string(d->segname))
 		return (1);
-	cmd = swap32(d->cmd, d->swap);
-	if ((cmd == LC_SEGMENT_64 || cmd == LC_SEGMENT)
+	d->cmd = is_64 ? ((t_seg64 *)d->seg)->cmd : ((t_seg32 *)d->seg)->cmd;
+	d->cmd = swap32(d->cmd, d->swap);
+	if ((d->cmd == LC_SEGMENT_64 || d->cmd == LC_SEGMENT)
 		&& (!ft_strcmp(d->segname, SEG_TEXT) || d->filetype == MH_OBJECT))
 	{
 		d->nsects = is_64 ? swap32(((t_seg64 *)d->seg)->nsects, d->swap)
 						: swap32(((t_seg32 *)d->seg)->nsects, d->swap);
-		d->sect = is_64 ? d->seg + sizeof(t_seg64) : d->seg + sizeof(t_seg32);
+		d->sect = is_64 ? (void *)d->seg + sizeof(t_seg64)
+						: (void *)d->seg + sizeof(t_seg32);
 		handle_section(d, ptr, is_64);
-		return (1);
 	}
 	d->seg = is_64 ? d->seg + swap32(((t_seg64 *)d->seg)->cmdsize, d->swap)
 				: d->seg + swap32(((t_seg32 *)d->seg)->cmdsize, d->swap);
@@ -59,19 +59,19 @@ static int		handle_segment(t_data *d, char *ptr, int is_64)
 static int		fill_data(t_data *d, char *ptr, int is_64)
 {
 	uint32_t	header_size;
-	uint32_t	seg_size;
+	unsigned int	magic;
 
+	magic = *(unsigned int *)ptr;
+	d->swap = magic == MH_CIGAM || magic == MH_CIGAM_64 ? 1 : 0;
 	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
 	if (is_invalid_addr((void *)ptr + header_size))
 		return (1);
 	d->ncmds = is_64 ? ((t_header64 *)ptr)->ncmds : ((t_header32 *)ptr)->ncmds;
 	d->ncmds = swap32(d->ncmds, d->swap);
-	d->seg = is_64 ? ptr + sizeof(t_header64) : ptr + sizeof(t_header32);
-	seg_size = is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
-	if (is_invalid_addr((void *)d->seg + seg_size))
-		return (1);
-	d->cmd = is_64 ? ((t_seg64 *)d->seg)->cmd : ((t_seg32 *)d->seg)->cmd;
-	d->cmd = swap32(d->cmd, d->swap);
+	d->seg = is_64 ? (void *)ptr + sizeof(t_header64)
+					: (void *)ptr + sizeof(t_header32);
+	d->filetype = is_64 ? swap32(((t_header64 *)ptr)->filetype, d->swap)
+						: swap32(((t_header32 *)ptr)->filetype, d->swap);
 	return (0);
 }
 
@@ -79,17 +79,11 @@ void			handle_32_64(char *ptr, int is_64)
 {
 	t_data		d;
 	uint32_t	i;
-	uint32_t	header_size;
 
 	if (is_invalid_addr((void *)ptr))
 		return ;
 	if (fill_data(&d, ptr, is_64))
 		return ;
-	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
-	if (is_invalid_addr((void *)ptr + header_size))
-		return ;
-	d.filetype = is_64 ? swap32(((t_header64 *)ptr)->filetype, d.swap)
-						: swap32(((t_header32 *)ptr)->filetype, d.swap);
 	i = -1;
 	while (++i < d.ncmds)
 	{

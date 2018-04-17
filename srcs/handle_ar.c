@@ -39,21 +39,20 @@ static int		print_ar(t_ar *ar, char *av)
 void			handle_ar(char *ptr, char *av)
 {
 	t_ar		*ar;
-	uint64_t	size;
+	int			first;
 
 	ar = (void *)ptr + SARMAG;
 	if (is_invalid_addr((void *)ar + sizeof(t_ar)))
 		return ;
-	size = 0;
-	while ((void *)ar + size < g_max_addr)
+	ar = (void *)ar + sizeof(t_ar) + ft_atoi(ar->ar_size);
+	first = 0;
+	while ((void *)ar < g_max_addr)
 	{
-		if (size)
+		if (first)
 			ft_putendl("");
-		size = sizeof(t_ar) + ft_atoi(ar->ar_size);
-		ar = (void *)ar + size;
-		if (is_invalid_addr((void *)ar + sizeof(t_ar)))
-			return ;
+		first = 1;
 		if (print_ar(ar, av))
 			return ;
+		ar = (void *)ar + sizeof(t_ar) + ft_atoi(ar->ar_size);
 	}
 }
