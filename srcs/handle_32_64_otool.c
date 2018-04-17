@@ -25,8 +25,7 @@ static void		handle_section(t_data *d, char *ptr, int is_64)
 			if (print_32_64_otool(d))
 				return ;
 		}
-		d->sect = is_64 ? d->sect + swap64(((t_sect64 *)d->sect)->size, d->swap)
-					: d->sect + swap32(((t_sect32 *)d->sect)->size, d->swap);
+		d->sect = d->sect + sect_size;
 	}
 }
 
