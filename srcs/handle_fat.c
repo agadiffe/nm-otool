@@ -1,6 +1,30 @@
 #include "ft_nm.h"
 #include "libft.h"
 
+static void handle_fat_arch(void *ptr, uint32_t cpu, uint32_t offset)
+{
+	static uint32_t		tab[2];
+
+	if (cpu == CPU_TYPE_X86_64)
+	{
+		if (!tab[0])
+		{
+			handle_32_64((void *)ptr + offset, X64);
+			tab[0] = 1;
+		}
+	}
+	else if (cpu == CPU_TYPE_X86)
+	{
+		if (!tab[1])
+		{
+			handle_32_64((void *)ptr + offset, X86);
+			tab[1] = 1;
+		}
+	}
+	else
+		ft_putendl("Unknow cpu type");
+}
+
 static void	fat_arch(void *ptr, uint32_t n_fatarch, int swap)
 {
 	t_arch		*arch;
@@ -16,12 +40,7 @@ static void	fat_arch(void *ptr, uint32_t n_fatarch, int swap)
 	{
 		offset = swap32(arch->offset, swap);
 		cpu = swap32(arch->cputype, swap);
-		if (cpu == CPU_TYPE_X86_64)
-			handle_32_64((void *)ptr + offset, X64);
-		else if (cpu == CPU_TYPE_I386)
-			handle_32_64((void *)ptr + offset, X86);
-		else
-			ft_putendl("Unknow cpu type");
+		handle_fat_arch(ptr, cpu, offset);
 		arch = (void *)arch + sizeof(t_arch);
 		if (is_invalid_addr((void *)arch + sizeof(t_arch)))
 			return ;
