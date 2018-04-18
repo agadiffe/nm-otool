@@ -5,7 +5,7 @@ static void		print_addr(t_data *d, char type)
 {
 	size_t	len;
 
-	if (!d->n_value && type != 't' && type != 'T')
+	if (!d->n_value && type != 't' && type != 'T' && type != 'A')
 		d->is_64 ? ft_putnchar(' ', 16) : ft_putnchar(' ', 8);
 	else
 	{

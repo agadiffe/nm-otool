@@ -1,28 +1,55 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-static void		handle_fat_arch(void *ptr, uint32_t cpu, uint32_t offset)
+static void		handle_fat_64(void *ptr, uint32_t cpu, uint32_t offset)
 {
 	static uint32_t		tab[2];
 
-	if (cpu == CPU_TYPE_X86_64)
+	if (!tab[0] && cpu == CPU_TYPE_X86_64)
 	{
-		if (!tab[0])
-		{
-			handle_32_64((void *)ptr + offset, X64);
-			tab[0] = 1;
-		}
+		tab[0] = 1;
+		ft_putendl("arch:X86_X64");
+		handle_32_64((void *)ptr + offset, X64);
 	}
-	else if (cpu == CPU_TYPE_X86)
+	if (!tab[1] && cpu == CPU_TYPE_POWERPC64)
 	{
-		if (!tab[1])
-		{
-			handle_32_64((void *)ptr + offset, X86);
-			tab[1] = 1;
-		}
+		tab[1] = 1;
+		ft_putendl("arch:POWERPC64");
+		handle_32_64((void *)ptr + offset, X64);
 	}
+}
+
+static void		handle_fat_32(void *ptr, uint32_t cpu, uint32_t offset)
+{
+	static uint32_t		tab[2];
+
+	if (!tab[0] && cpu == CPU_TYPE_X86)
+	{
+		tab[0] = 1;
+		ft_putendl("arch:X86");
+		handle_32_64((void *)ptr + offset, X86);
+	}
+	if (!tab[1] && cpu == CPU_TYPE_POWERPC)
+	{
+		tab[1] = 1;
+		ft_putendl("arch:POWERPC");
+		handle_32_64((void *)ptr + offset, X86);
+	}
+}
+
+static void		handle_fat_arch(void *ptr, uint32_t cpu, uint32_t offset)
+{
+	unsigned int	magic_nbr;
+
+	if (is_invalid_addr((void *)ptr + offset))
+		return ;
+	magic_nbr = *(unsigned int *)(ptr + offset);
+	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
+		handle_fat_64(ptr, cpu, offset);
+	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
+		handle_fat_32(ptr, cpu, offset);
 	else
-		ft_putendl("Unknow cpu type");
+		ft_putendl("Unknow architecture");
 }
 
 static void		fat_arch(void *ptr, uint32_t n_fatarch, int swap)
