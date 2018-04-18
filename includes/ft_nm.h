@@ -39,22 +39,23 @@ typedef struct section				t_sect32;
 
 typedef struct		s_data
 {
+	t_lc		*lc;
+	t_symtab	*sym;
+	char		*string_table;
+	char		*ptr;
+	char		*segname;
+	int			cpu;
 	int			is_64;
 	int			swap;
-	char		*ptr;
 	uint32_t	cmd;
 	uint32_t	cmdsize;
 	uint32_t	ncmds;
-	t_lc		*lc;
-	t_symtab	*sym;
-	void		*array;
-	char		*string_table;
 	uint64_t	n_value;
+	uint32_t	filetype;
+	uint32_t	nsects;
 	uint8_t		n_type;
 	uint8_t		n_sect;
-	uint32_t	filetype;
-	char		*segname;
-	uint32_t	nsects;
+	void		*array;
 	void		*sect;
 	void		*seg;
 }					t_data;

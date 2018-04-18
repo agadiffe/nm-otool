@@ -1,19 +1,22 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-static void		print_hexdump(void *ptr, size_t size)
+static void		print_hexdump(void *ptr, size_t size, int cpu)
 {
 	static char		buf[] = "0123456789abcdef";
 	unsigned char	c;
+	int				ppc;
 
+	ppc = cpu == CPU_TYPE_POWERPC || cpu == CPU_TYPE_POWERPC64 ? 1 : 0;
 	while (size)
 	{
 		c = *(unsigned char *)ptr;
 		ft_putchar(buf[c >> 4]);
 		ft_putchar(buf[c & 0xF]);
-		ft_putchar(' ');
 		ptr++;
 		size--;
+		if (!ppc || size % 4 == 0)
+			ft_putchar(' ');
 	}
 }
 
@@ -28,14 +31,14 @@ static void		print_addr(uint64_t *addr, int is_64)
 }
 
 static int		handle_print_addr(void *ptr, uint64_t *addr,
-									uint64_t size, int is_64)
+									uint64_t size, t_data *d)
 {
 	if (is_invalid_addr((void *)ptr + size)
 			|| is_invalid_addr((void *)*addr + size))
 		return (1);
-	print_addr(addr, is_64);
+	print_addr(addr, d->is_64);
 	ft_putchar('\t');
-	print_hexdump(ptr, size);
+	print_hexdump(ptr, size, d->cpu);
 	ft_putchar('\n');
 	return (0);
 }
@@ -63,14 +66,14 @@ int				print_32_64_otool(t_data *d)
 	fill_data(d, &ptr, &addr, &size);
 	while (size > 16)
 	{
-		if (handle_print_addr(ptr, &addr, 16, d->is_64))
+		if (handle_print_addr(ptr, &addr, 16, d))
 			return (1);
 		ptr += 16;
 		size -= 16;
 	}
-	if (size)
+	if (size > 0)
 	{
-		if (handle_print_addr(ptr, &addr, size, d->is_64))
+		if (handle_print_addr(ptr, &addr, size, d))
 			return (1);
 	}
 	return (0);

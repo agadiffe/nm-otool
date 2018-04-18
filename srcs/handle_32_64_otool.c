@@ -11,7 +11,7 @@ static void		handle_section(t_data *d, char *ptr, int is_64)
 	d->is_64 = is_64;
 	sect_size = is_64 ? sizeof(t_sect64) : sizeof(t_sect32);
 	i = -1;
-	while (++i < swap32(d->nsects, d->swap))
+	while (++i < d->nsects)
 	{
 		if (is_invalid_addr((void *)d->sect + sect_size))
 			return ;
@@ -72,6 +72,8 @@ static int		fill_data(t_data *d, char *ptr, int is_64)
 					: (void *)ptr + sizeof(t_header32);
 	d->filetype = is_64 ? swap32(((t_header64 *)ptr)->filetype, d->swap)
 						: swap32(((t_header32 *)ptr)->filetype, d->swap);
+	d->cpu = is_64 ? swap32(((t_header64 *)ptr)->cputype, d->swap)
+						: swap32(((t_header32 *)ptr)->cputype, d->swap);
 	return (0);
 }
 
