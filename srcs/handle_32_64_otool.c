@@ -58,7 +58,7 @@ static int		handle_segment(t_data *d, char *ptr, int is_64)
 
 static int		fill_data(t_data *d, char *ptr, int is_64)
 {
-	uint32_t	header_size;
+	uint32_t		header_size;
 	unsigned int	magic;
 
 	magic = *(unsigned int *)ptr;

@@ -1,7 +1,7 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-static void handle_fat_arch(void *ptr, uint32_t cpu, uint32_t offset)
+static void		handle_fat_arch(void *ptr, uint32_t cpu, uint32_t offset)
 {
 	static uint32_t		tab[2];
 
@@ -25,7 +25,7 @@ static void handle_fat_arch(void *ptr, uint32_t cpu, uint32_t offset)
 		ft_putendl("Unknow cpu type");
 }
 
-static void	fat_arch(void *ptr, uint32_t n_fatarch, int swap)
+static void		fat_arch(void *ptr, uint32_t n_fatarch, int swap)
 {
 	t_arch		*arch;
 	uint32_t	i;
@@ -49,7 +49,7 @@ static void	fat_arch(void *ptr, uint32_t n_fatarch, int swap)
 	}
 }
 
-void	handle_fat(char *ptr)
+void			handle_fat(char *ptr)
 {
 	uint32_t		n_fatarch;
 	unsigned int	magic_nbr;

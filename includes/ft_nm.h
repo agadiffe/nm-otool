@@ -1,10 +1,10 @@
 #ifndef FT_NM_H
 # define FT_NM_H
 
-#include "loader.h"
-#include "nlist.h"
-#include "fat.h"
-#include "ar.h"
+# include "loader.h"
+# include "nlist.h"
+# include "fat.h"
+# include "ar.h"
 
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE

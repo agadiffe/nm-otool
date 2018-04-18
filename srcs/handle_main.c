@@ -49,10 +49,16 @@ static int		handle_file(char *av, char **ptr, size_t *st_size)
 	if ((fd = open(av, O_RDONLY)) < 0)
 		return (ft_error_ret("open error!", 1));
 	if (fstat(fd, &buf) < 0)
+	{
+		close(fd);
 		return (ft_error_ret("fstat error!", 1));
+	}
 	*st_size = buf.st_size;
 	if ((*ptr = mmap(0, buf.st_size, PROT, MAP, fd, 0)) == MAP_FAILED)
+	{
+		close(fd);
 		return (ft_error_ret("mmap error!", 1));
+	}
 	close(fd);
 	return (0);
 }
