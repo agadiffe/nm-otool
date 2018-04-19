@@ -6,7 +6,7 @@
 #    By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/05/14 20:31:10 by agadiffe          #+#    #+#              #
-#    Updated: 2017/12/23 17:30:50 by agadiffe         ###   ########.fr        #
+#    Updated: 2018/04/19 19:59:32 by agadiffe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRC_NAME_NM = main.c	\
 			  handle_ar.c	\
 			  handle_main.c	\
 			  print_nm.c	\
+			  print_arch.c	\
 			  swap.c	\
 			  sort_nlist.c
 
@@ -37,6 +38,7 @@ SRC_NAME_OTOOL = main.c \
 				 handle_fat.c	\
 				 handle_main.c	\
 				 swap.c	\
+				 print_arch.c	\
 				 print_otool.c
 
 OBJ_PATH = ./obj/
@@ -47,7 +49,7 @@ OBJ_OTOOL = $(addprefix $(OBJ_PATH),$(OBJ_NAME_OTOOL))
 
 INC_PATH = ./includes/
 INC = $(addprefix -I,$(INC_PATH))
-INC_PATH_MACHO = ./includes/mach-o/
+INC_PATH_MACHO = ./includes/mach-o/ ./includes/mach/
 INC_MACHO = $(addprefix -I,$(INC_PATH_MACHO))
 INC_FILE = $(INC_PATH)$(NAME_NM).h
 

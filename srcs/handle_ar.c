@@ -32,7 +32,7 @@ static int		print_ar(t_ar *ar, char *av)
 	ft_putchar(')');
 	ft_putendl(":");
 	tmp = (void *)ar + sizeof(t_ar) + n;
-	handle_arch(tmp, av);
+	handle_arch(tmp, av, 1);
 	return (0);
 }
 

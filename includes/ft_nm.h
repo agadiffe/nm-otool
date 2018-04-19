@@ -64,14 +64,15 @@ typedef struct		s_data
 **	nm & otool
 */
 int					handle_main(int ac, char **av);
-void				handle_arch(char *ptr, char *av);
-void				handle_32_64(char *ptr, int is_64);
-void				handle_fat(char *ptr);
+void				handle_arch(char *ptr, char *avi, int is_ar);
+void				handle_32_64(char *ptr, int is_64, char *avi, int is_ar);
+void				handle_fat(char *ptr, char *av);
 void				handle_ar(char *ptr, char *av);
 int					is_invalid_addr(void *to_check);
 int					is_not_terminated_string(char *s);
 uint32_t			swap32(uint32_t value, int swap);
 uint64_t			swap64(uint64_t value, int swap);
+int					check_duplicate_print_arch(int cpu, char *av);
 
 /*
 **	nm

@@ -24,17 +24,17 @@ int				is_invalid_addr(void *to_check)
 	return (0);
 }
 
-void			handle_arch(char *ptr, char *av)
+void			handle_arch(char *ptr, char *av, int is_ar)
 {
 	unsigned int	magic_nbr;
 
 	magic_nbr = *(unsigned int *)ptr;
 	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
-		handle_32_64(ptr, X64);
+		handle_32_64(ptr, X64, av, is_ar);
 	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
-		handle_32_64(ptr, X86);
+		handle_32_64(ptr, X86, av, is_ar);
 	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM)
-		handle_fat(ptr);
+		handle_fat(ptr, av);
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 		handle_ar(ptr, av);
 	else
@@ -72,12 +72,10 @@ int				handle_main(int ac, char **av)
 	i = 0;
 	while (++i < ac)
 	{
-		ft_putstr(av[i]);
-		ft_putendl(":");
 		if (handle_file(av[i], &ptr, &st_size))
 			continue ;
 		g_max_addr = (void *)ptr + st_size;
-		handle_arch(ptr, av[i]);
+		handle_arch(ptr, av[i], 0);
 		if (i + 1 < ac)
 			ft_putendl("");
 		if (munmap(ptr, st_size) < 0)

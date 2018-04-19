@@ -41,19 +41,22 @@ static int		fill_data(t_data *d, char *ptr, int is_64)
 					: (void *)ptr + sizeof(t_header32);
 	if (is_invalid_addr((void *)d->lc + sizeof(t_lc)))
 		return (1);
+	d->cpu = is_64 ? swap32(((t_header64 *)ptr)->cputype, d->swap)
+						: swap32(((t_header32 *)ptr)->cputype, d->swap);
 	return (0);
 }
 
-void			handle_32_64(char *ptr, int is_64)
+void			handle_32_64(char *ptr, int is_64, char *av, int is_ar)
 {
 	uint32_t		i;
 	t_data			d;
 	t_lc			*tmp;
 
-	if (is_invalid_addr((void *)ptr))
+	if (is_invalid_addr((void *)ptr) || fill_data(&d, ptr, is_64))
 		return ;
-	if (fill_data(&d, ptr, is_64))
-		return ;
+	if (!is_ar)
+		if (!check_duplicate_print_arch(d.cpu, av))
+			return ;
 	tmp = d.lc;
 	i = -1;
 	while (++i < d.ncmds)

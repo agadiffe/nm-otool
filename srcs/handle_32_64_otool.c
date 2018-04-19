@@ -77,15 +77,16 @@ static int		fill_data(t_data *d, char *ptr, int is_64)
 	return (0);
 }
 
-void			handle_32_64(char *ptr, int is_64)
+void			handle_32_64(char *ptr, int is_64, char *av, int is_ar)
 {
 	t_data		d;
 	uint32_t	i;
 
-	if (is_invalid_addr((void *)ptr))
+	if (is_invalid_addr((void *)ptr) || fill_data(&d, ptr, is_64))
 		return ;
-	if (fill_data(&d, ptr, is_64))
-		return ;
+	if (!is_ar)
+		if (!check_duplicate_print_arch(d.cpu, av))
+			return ;
 	i = -1;
 	while (++i < d.ncmds)
 	{
