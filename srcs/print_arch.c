@@ -25,7 +25,7 @@ int				check_duplicate_print_arch(int cpu, char *av)
 	}
 	if (!tab[2] && cpu == CPU_TYPE_X86_64)
 	{
-		print_arch(av, "X86_64");
+		print_arch(av, "x86_64");
 		return ((tab[2] = 1));
 	}
 	if (!tab[3] && cpu == CPU_TYPE_POWERPC64)

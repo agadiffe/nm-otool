@@ -44,6 +44,34 @@ static void	swap_nlist_arg(t_data *d, uint32_t j)
 	}
 }
 
+int			sort_nlist_same_name(t_data *d)
+{
+	uint32_t	i;
+	uint32_t	j;
+	uint32_t	nsyms;
+	int			error;
+	
+	i = 1;
+	error = 0;
+	nsyms = swap32(d->sym->nsyms, d->swap);
+	while (i <= nsyms - 1)
+	{
+		j = i;
+		while (j > 0 && cmp_nlist_arg(d, j, &error) == 0)
+		{
+			d->n_value = d->is_64 ? swap64(NLIST64[j].n_value, d->swap)
+									: swap32(NLIST32[j].n_value, d->swap);
+			if (error)
+				return (1);
+			if (!d->n_value)
+				swap_nlist_arg(d, j);
+			--j;
+		}
+		++i;
+	}
+	return (0);
+}
+
 int			sort_nlist(t_data *d)
 {
 	uint32_t	i;

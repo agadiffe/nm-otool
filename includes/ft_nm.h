@@ -80,6 +80,7 @@ int					check_duplicate_print_arch(int cpu, char *av);
 */
 char				get_type(t_data *d, uint32_t i);
 int					sort_nlist(t_data *d);
+int					sort_nlist_same_name(t_data *d);
 int					print_32_64(t_data *d, uint32_t i);
 
 /*

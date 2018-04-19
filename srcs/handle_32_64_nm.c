@@ -16,6 +16,8 @@ static int		handle_symtab(t_data *d)
 	i = -1;
 	if (sort_nlist(d))
 		return (1);
+	if (sort_nlist_same_name(d))
+		return (1);
 	while (++i < nsyms)
 	{
 		if (print_32_64(d, i))

@@ -57,6 +57,8 @@ static int	handle_seg(char *sect, t_data *d)
 	i = -1;
 	while (++i < d->ncmds)
 	{
+		if (is_invalid_addr((void *)tmp + sizeof(t_lc), "type() load command"))
+			return (-1);
 		cmd = swap32(tmp->cmd, d->swap);
 		if (cmd == LC_SEGMENT_64 || cmd == LC_SEGMENT)
 		{
@@ -64,8 +66,6 @@ static int	handle_seg(char *sect, t_data *d)
 				break ;
 		}
 		tmp = (void *)tmp + swap32(tmp->cmdsize, d->swap);
-		if (is_invalid_addr((void *)tmp + sizeof(t_lc), "type() load command"))
-			return (-1);
 	}
 	return (ret);
 }
