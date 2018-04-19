@@ -26,7 +26,7 @@ int				print_32_64(t_data *d, uint32_t i)
 		return (1);
 	name = d->is_64 ? d->string_table + swap32(NLIST64[i].n_un.n_strx, d->swap)
 					: d->string_table + swap32(NLIST32[i].n_un.n_strx, d->swap);
-	if (is_not_terminated_string(name))
+	if (is_not_terminated_string(name, "print_nm()"))
 		return (1);
 	if (ft_strlen(name) && type != '?' && type != 'u' && type != '-')
 	{

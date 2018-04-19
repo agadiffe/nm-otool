@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int				is_not_terminated_string(char *s)
+int				is_not_terminated_string(char *s, char *str)
 {
 	while ((void *)s < g_max_addr)
 	{
@@ -14,13 +14,19 @@ int				is_not_terminated_string(char *s)
 			return (0);
 		s++;
 	}
-	return (ft_error_ret("file data error", 1));
+	ft_putstr_fd("file data error: ", 2);
+	ft_putendl_fd(str, 2);
+	return (1);
 }
 
-int				is_invalid_addr(void *to_check)
+int				is_invalid_addr(void *to_check, char *str)
 {
-	if (to_check > g_max_addr)
-		return (ft_error_ret("file data error", 1));
+	if (to_check > g_max_addr || to_check < g_origin_addr)
+	{
+		ft_putstr_fd("file data error: ", 2);
+		ft_putendl_fd(str, 2);
+		return (1);
+	}
 	return (0);
 }
 
@@ -75,6 +81,7 @@ int				handle_main(int ac, char **av)
 		if (handle_file(av[i], &ptr, &st_size))
 			continue ;
 		g_max_addr = (void *)ptr + st_size;
+		g_origin_addr = (void *)ptr;
 		handle_arch(ptr, av[i], 0);
 		if (i + 1 < ac)
 			ft_putendl("");

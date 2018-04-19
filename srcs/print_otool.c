@@ -33,8 +33,8 @@ static void		print_addr(uint64_t *addr, int is_64)
 static int		handle_print_addr(void *ptr, uint64_t *addr,
 									uint64_t size, t_data *d)
 {
-	if (is_invalid_addr((void *)ptr + size)
-			|| is_invalid_addr((void *)*addr + size))
+	if (is_invalid_addr((void *)ptr + size, "print_otool_addr()")
+			|| is_invalid_addr((void *)*addr + size, "print_otool_addr()"))
 		return (1);
 	print_addr(addr, d->is_64);
 	ft_putchar('\t');
@@ -61,7 +61,7 @@ int				print_32_64_otool(t_data *d)
 	uint32_t	sect_size;
 
 	sect_size = d->is_64 ? sizeof(t_sect64) : sizeof(t_sect32);
-	if (is_invalid_addr((void *)d->ptr + sect_size))
+	if (is_invalid_addr((void *)d->ptr + sect_size, "print_otool_addr()"))
 		return (1);
 	fill_data(d, &ptr, &addr, &size);
 	while (size > 16)

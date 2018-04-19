@@ -6,7 +6,7 @@ static int	cmp_sect_name(char *sect, t_data *d, t_lc *lc, int *error)
 	char	*s;
 
 	s = d->is_64 ? ((t_sect64 *)lc)->sectname : ((t_sect32 *)lc)->sectname;
-	if (is_not_terminated_string(s))
+	if (is_not_terminated_string(s, "type() section name"))
 	{
 		*error = 1;
 		return (1);
@@ -25,14 +25,14 @@ static int	handle_sect(char *sect, t_data *d, uint8_t *count, t_lc *lc)
 	error = 0;
 	sect_size = d->is_64 ? sizeof(t_sect64) : sizeof(t_sect32);
 	seg_size = d->is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
-	if (is_invalid_addr((void *)lc + seg_size))
+	if (is_invalid_addr((void *)lc + seg_size, "type() segment"))
 		return (-1);
 	nsects = d->is_64 ? ((t_seg64 *)lc)->nsects : ((t_seg32 *)lc)->nsects;
 	lc = d->is_64 ? (void *)lc + sizeof(t_seg64) : (void *)lc + sizeof(t_seg32);
 	i = -1;
 	while (++i < swap32(nsects, d->swap))
 	{
-		if (error || is_invalid_addr((void *)lc + sect_size))
+		if (error || is_invalid_addr((void *)lc + sect_size, "type() section"))
 			return (-1);
 		if (*count == d->n_sect && !cmp_sect_name(sect, d, lc, &error))
 			return (1);
@@ -64,7 +64,7 @@ static int	handle_seg(char *sect, t_data *d)
 				break ;
 		}
 		tmp = (void *)tmp + swap32(tmp->cmdsize, d->swap);
-		if (is_invalid_addr((void *)tmp + sizeof(t_lc)))
+		if (is_invalid_addr((void *)tmp + sizeof(t_lc), "type() load command"))
 			return (-1);
 	}
 	return (ret);

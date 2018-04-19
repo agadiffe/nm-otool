@@ -21,6 +21,7 @@
 # define NLIST32	((t_nlist32 *)d->array)
 
 void		*g_max_addr;
+void		*g_origin_addr;
 
 typedef struct load_command			t_lc;
 typedef struct symtab_command		t_symtab;
@@ -68,8 +69,8 @@ void				handle_arch(char *ptr, char *avi, int is_ar);
 void				handle_32_64(char *ptr, int is_64, char *avi, int is_ar);
 void				handle_fat(char *ptr, char *av);
 void				handle_ar(char *ptr, char *av);
-int					is_invalid_addr(void *to_check);
-int					is_not_terminated_string(char *s);
+int					is_invalid_addr(void *to_check, char *str);
+int					is_not_terminated_string(char *s, char *str);
 uint32_t			swap32(uint32_t value, int swap);
 uint64_t			swap64(uint64_t value, int swap);
 int					check_duplicate_print_arch(int cpu, char *av);

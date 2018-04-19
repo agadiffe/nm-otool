@@ -16,7 +16,8 @@ static int	cmp_nlist_arg(t_data *d, uint32_t j, int *error)
 		s1 = d->string_table + swap32(NLIST32[j].n_un.n_strx, d->swap);
 		s2 = d->string_table + swap32(NLIST32[j - 1].n_un.n_strx, d->swap);
 	}
-	if (is_not_terminated_string(s1) || is_not_terminated_string(s2))
+	if (is_not_terminated_string(s1, "sort nlist strintable name")
+			|| is_not_terminated_string(s2, "sort nlist strintable name"))
 	{
 		*error = 1;
 		return (-1);
