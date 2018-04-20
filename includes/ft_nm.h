@@ -6,6 +6,8 @@
 # include "fat.h"
 # include "ar.h"
 
+# define HOST_CPU	CPU_TYPE_X86_64
+
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE
 
@@ -64,28 +66,31 @@ typedef struct		s_data
 /*
 **	nm & otool
 */
-int					handle_main(int ac, char **av);
-void				handle_arch(char *ptr, char *avi, int is_ar);
-void				handle_32_64(char *ptr, int is_64, char *avi, int is_ar);
-void				handle_fat(char *ptr, char *av);
-void				handle_ar(char *ptr, char *av);
-int					is_invalid_addr(void *to_check, char *str);
-int					is_not_terminated_string(char *s, char *str);
-uint32_t			swap32(uint32_t value, int swap);
-uint64_t			swap64(uint64_t value, int swap);
-int					check_duplicate_print_arch(int cpu, char *av);
+int				handle_main(int ac, char **av);
+void			handle_arch(char *ptr, char *av, int print_av);
+void			handle_32_64(char *ptr, int is_64, char *av, int print_av);
+void			handle_fat(char *ptr, char *av);
+void			handle_ar(char *ptr, char *av);
+int				is_invalid_addr(void *to_check, char *str);
+int				is_not_terminated_string(char *s, char *str);
+uint32_t		swap32(uint32_t value, int swap);
+uint64_t		swap64(uint64_t value, int swap);
+int				check_duplicate_print_arch(int cpu, char *av);
+int				check_fat_host_arch(char *ptr, uint32_t n_fatarch, int swap);
+int				is_32_or_64(char *ptr);
+int				get_cpu(char *ptr);
 
 /*
 **	nm
 */
-char				get_type(t_data *d, uint32_t i);
-int					sort_nlist(t_data *d);
-int					sort_nlist_same_name(t_data *d);
-int					print_32_64(t_data *d, uint32_t i);
+char			get_type(t_data *d, uint32_t i);
+int				sort_nlist(t_data *d);
+int				sort_nlist_same_name(t_data *d);
+int				print_32_64(t_data *d, uint32_t i);
 
 /*
 **	otool
 */
-int					print_32_64_otool(t_data *d);
+int				print_32_64_otool(t_data *d);
 
 #endif

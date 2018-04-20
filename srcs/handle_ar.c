@@ -34,7 +34,7 @@ static int		print_ar(t_ar *ar, char *av)
 	tmp = (void *)ar + sizeof(t_ar) + n;
 	if (is_invalid_addr(tmp, "ptr archive member"))
 		return (1);
-	handle_arch(tmp, av, 1);
+	handle_arch(tmp, av, 0);
 	return (0);
 }
 

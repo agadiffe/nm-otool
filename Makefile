@@ -6,7 +6,7 @@
 #    By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/05/14 20:31:10 by agadiffe          #+#    #+#              #
-#    Updated: 2018/04/19 19:59:32 by agadiffe         ###   ########.fr        #
+#    Updated: 2018/04/20 20:12:08 by agadiffe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ SRC_NAME_NM = main.c	\
 			  get_type.c	\
 			  handle_32_64_nm.c	\
 			  handle_fat.c	\
+			  handle_fat_nohostcpu.c	\
 			  handle_ar.c	\
 			  handle_main.c	\
 			  print_nm.c	\
@@ -36,6 +37,7 @@ SRC_NAME_OTOOL = main.c \
 				 handle_32_64_otool.c	\
 				 handle_ar.c	\
 				 handle_fat.c	\
+				 handle_fat_nohostcpu.c	\
 				 handle_main.c	\
 				 swap.c	\
 				 print_arch.c	\

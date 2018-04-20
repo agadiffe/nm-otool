@@ -35,4 +35,3 @@ int				check_duplicate_print_arch(int cpu, char *av)
 	}
 	return (0);
 }
-

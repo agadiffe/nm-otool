@@ -6,17 +6,19 @@ static void		fat_arch(char *ptr, uint32_t n_fatarch, int swap, char *av)
 	t_arch		*arch;
 	uint32_t	i;
 	uint32_t	offset;
+	int			is_host_cpu;
 
+	is_host_cpu = check_fat_host_arch(ptr, n_fatarch, swap);
+	if (is_host_cpu < 0)
+		return ;
 	arch = (void *)ptr + sizeof(t_headerfat);
 	i = -1;
 	while (++i != n_fatarch)
 	{
-		if (is_invalid_addr((void *)arch + sizeof(t_arch), "fat ptr + header"))
-			return ;
 		offset = swap32(arch->offset, swap);
-		if (is_invalid_addr((void *)ptr + offset, "fat member ptr"))
-			return ;
-		handle_arch((void *)ptr + offset, av, 0);
+		if (!is_host_cpu || !is_32_or_64((void *)ptr + offset)
+				|| get_cpu((void *)ptr + offset) == HOST_CPU)
+			handle_arch((void *)ptr + offset, av, 1);
 		arch = (void *)arch + sizeof(t_arch);
 		if (i + 1 != n_fatarch)
 			ft_putendl("");

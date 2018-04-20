@@ -47,7 +47,7 @@ static int		fill_data(t_data *d, char *ptr, int is_64)
 	return (0);
 }
 
-void			handle_32_64(char *ptr, int is_64, char *av, int is_ar)
+void			handle_32_64(char *ptr, int is_64, char *av, int print_av)
 {
 	uint32_t		i;
 	t_data			d;
@@ -55,7 +55,7 @@ void			handle_32_64(char *ptr, int is_64, char *av, int is_ar)
 
 	if (fill_data(&d, ptr, is_64))
 		return ;
-	if (!is_ar)
+	if (print_av)
 		if (!check_duplicate_print_arch(d.cpu, av))
 			return ;
 	tmp = d.lc;
