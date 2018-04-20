@@ -28,7 +28,8 @@ int				print_32_64(t_data *d, uint32_t i)
 					: d->string_table + swap32(NLIST32[i].n_un.n_strx, d->swap);
 	if (is_not_terminated_string(name, "print_nm()"))
 		return (1);
-	if (ft_strlen(name) && type != '?' && type != 'u' && type != '-')
+	if (d->display && ft_strlen(name)
+			&& type != '?' && type != 'u' && type != '-')
 	{
 		print_addr(d, type);
 		ft_putchar(' ');

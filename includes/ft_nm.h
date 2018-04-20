@@ -11,8 +11,8 @@
 # define PROT		PROT_READ | PROT_WRITE
 # define MAP		MAP_PRIVATE
 
-# define OTOOL	1
-# define NM		0
+# define NM		1
+# define OTOOL	0
 
 # define X64	1
 # define X86	0
@@ -50,6 +50,7 @@ typedef struct		s_data
 	int			cpu;
 	int			is_64;
 	int			swap;
+	int			display;
 	uint32_t	cmd;
 	uint32_t	cmdsize;
 	uint32_t	ncmds;
@@ -67,15 +68,15 @@ typedef struct		s_data
 **	nm & otool
 */
 int				handle_main(int ac, char **av);
-void			handle_arch(char *ptr, char *av, int print_av);
-void			handle_32_64(char *ptr, int is_64, char *av, int print_av);
+void			handle_arch(char *ptr, char *av, int print);
+void			handle_32_64(char *ptr, int is_64, char *av, int print);
 void			handle_fat(char *ptr, char *av);
 void			handle_ar(char *ptr, char *av);
 int				is_invalid_addr(void *to_check, char *str);
 int				is_not_terminated_string(char *s, char *str);
 uint32_t		swap32(uint32_t value, int swap);
 uint64_t		swap64(uint64_t value, int swap);
-int				check_duplicate_print_arch(int cpu, char *av);
+int				print_arch(int cpu, char *av, int is_nm, int print);
 int				check_fat_host_arch(char *ptr, uint32_t n_fatarch, int swap);
 int				is_32_or_64(char *ptr);
 int				get_cpu(char *ptr);

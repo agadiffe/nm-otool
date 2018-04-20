@@ -30,15 +30,15 @@ int				is_invalid_addr(void *to_check, char *str)
 	return (0);
 }
 
-void			handle_arch(char *ptr, char *av, int print_av)
+void			handle_arch(char *ptr, char *av, int print)
 {
 	unsigned int	magic_nbr;
 
 	magic_nbr = *(unsigned int *)ptr;
 	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
-		handle_32_64(ptr, X64, av, print_av);
+		handle_32_64(ptr, X64, av, print);
 	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
-		handle_32_64(ptr, X86, av, print_av);
+		handle_32_64(ptr, X86, av, print);
 	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM)
 		handle_fat(ptr, av);
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))

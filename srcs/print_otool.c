@@ -20,26 +20,29 @@ static void		print_hexdump(void *ptr, size_t size, int cpu)
 	}
 }
 
-static void		print_addr(uint64_t *addr, int is_64)
+static void		print_addr(uint64_t addr, int is_64)
 {
 	size_t		len;
 
-	len = is_64 ? 16 - ft_nlen(*addr, 16) : 8 - ft_nlen(*addr, 16);
+	len = is_64 ? 16 - ft_nlen(addr, 16) : 8 - ft_nlen(addr, 16);
 	ft_putnchar('0', len);
-	ft_putnbr_base(*addr, BASE16);
-	*addr += 16;
+	ft_putnbr_base(addr, BASE16);
 }
 
-static int		handle_print_addr(void *ptr, uint64_t *addr,
+static int		handle_print_addr(void *ptr, uint64_t addr,
 									uint64_t size, t_data *d)
 {
-	if (is_invalid_addr((void *)ptr + size, "print_otool_addr()")
-			|| is_invalid_addr((void *)*addr + size, "print_otool_addr()"))
+	if (is_invalid_addr((void *)ptr + size, "print_otool ptr + size")
+			|| is_invalid_addr(g_origin_addr + (uint32_t)addr + size,
+								"print_otool addr + size"))
 		return (1);
-	print_addr(addr, d->is_64);
-	ft_putchar('\t');
-	print_hexdump(ptr, size, d->cpu);
-	ft_putchar('\n');
+	if (d->display)
+	{
+		print_addr(addr, d->is_64);
+		ft_putchar('\t');
+		print_hexdump(ptr, size, d->cpu);
+		ft_putchar('\n');
+	}
 	return (0);
 }
 
@@ -60,20 +63,23 @@ int				print_32_64_otool(t_data *d)
 	void		*ptr;
 	uint32_t	sect_size;
 
+	if (d->display)
+		ft_putendl("Contents of (__TEXT,__text) section");
 	sect_size = d->is_64 ? sizeof(t_sect64) : sizeof(t_sect32);
-	if (is_invalid_addr((void *)d->ptr + sect_size, "print_otool_addr()"))
+	if (is_invalid_addr((void *)d->ptr + sect_size, "print_otool ptr + header"))
 		return (1);
 	fill_data(d, &ptr, &addr, &size);
 	while (size > 16)
 	{
-		if (handle_print_addr(ptr, &addr, 16, d))
+		if (handle_print_addr(ptr, addr, 16, d))
 			return (1);
+		addr += 16;
 		ptr += 16;
 		size -= 16;
 	}
 	if (size > 0)
 	{
-		if (handle_print_addr(ptr, &addr, size, d))
+		if (handle_print_addr(ptr, addr, size, d))
 			return (1);
 	}
 	return (0);

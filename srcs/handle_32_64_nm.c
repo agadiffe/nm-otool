@@ -32,6 +32,7 @@ static int		fill_data(t_data *d, char *ptr, int is_64)
 	unsigned int	magic;
 
 	magic = *(unsigned int *)ptr;
+	d->display = 1;
 	d->swap = magic == MH_CIGAM || magic == MH_CIGAM_64 ? 1 : 0;
 	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
 	if (is_invalid_addr((void *)ptr + header_size, "ptr + header"))
@@ -47,7 +48,7 @@ static int		fill_data(t_data *d, char *ptr, int is_64)
 	return (0);
 }
 
-void			handle_32_64(char *ptr, int is_64, char *av, int print_av)
+void			handle_32_64(char *ptr, int is_64, char *av, int print)
 {
 	uint32_t		i;
 	t_data			d;
@@ -55,9 +56,8 @@ void			handle_32_64(char *ptr, int is_64, char *av, int print_av)
 
 	if (fill_data(&d, ptr, is_64))
 		return ;
-	if (print_av)
-		if (!check_duplicate_print_arch(d.cpu, av))
-			return ;
+	if (print)
+		d.display = print_arch(d.cpu, av, NM, print);
 	tmp = d.lc;
 	i = -1;
 	while (++i < d.ncmds)
