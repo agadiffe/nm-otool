@@ -52,6 +52,8 @@ void			handle_ar(char *ptr, char *av)
 	no_first = 0;
 	while ((void *)ar < g_max_addr)
 	{
+		if (ft_strncmp(ar->ar_fmag, ARFMAG, 2))
+			break ;
 		if (no_first)
 			ft_putendl("");
 		no_first = 1;
