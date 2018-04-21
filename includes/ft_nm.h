@@ -74,8 +74,9 @@ int				is_not_terminated_string(char *s, char *str);
 uint32_t		swap32(uint32_t value, int swap);
 uint64_t		swap64(uint64_t value, int swap);
 int				print_arch(int cpu, char *av, int is_nm, int print);
-int				*get_arch_tab_printed(int reset, int is_ar);
-int				check_fat_host_arch(char *ptr, uint32_t n_fatarch, int swap);
+int				*get_arch_tab_printed(int reset, int reset_ar, int is_ar);
+int				check_fat_host_arch(char *ptr, uint32_t n_fatarch,
+									int swap, int *print);
 int				is_32_or_64(char *ptr);
 int				get_cpu(char *ptr);
 

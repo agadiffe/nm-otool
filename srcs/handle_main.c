@@ -92,7 +92,7 @@ int				handle_main(int ac, char **av, int is_nm)
 			ft_putendl_fd("Error: munmap() failed", 2);
 			continue ;
 		}
-		get_arch_tab_printed(1, 0);
+		get_arch_tab_printed(1, 1, 0);
 	}
 	return (EXIT_SUCCESS);
 }
