@@ -31,13 +31,12 @@ int			get_cpu(char *ptr)
 
 int			check_fat_host_arch(char *ptr, uint32_t n_fatarch, int swap)
 {
-	t_arch			*arch;
-	uint32_t		i;
-	uint32_t		offset;
-	int				host_cpu;
-	int				cpu;
+	t_arch		*arch;
+	uint32_t	i;
+	uint32_t	offset;
+	int			cpu[2];
 
-	host_cpu = 0;
+	cpu[0] = 0;
 	arch = (void *)ptr + sizeof(t_headerfat);
 	i = -1;
 	while (++i != n_fatarch)
@@ -49,12 +48,12 @@ int			check_fat_host_arch(char *ptr, uint32_t n_fatarch, int swap)
 			return (1);
 		if (is_32_or_64((void *)ptr + offset))
 		{
-			if ((cpu = get_cpu((void *)ptr + offset)) < 0)
+			if ((cpu[1] = get_cpu((void *)ptr + offset)) < 0)
 				return (-1);
-			if (cpu == HOST_CPU)
-				host_cpu = 1;
+			if (cpu[1] == HOST_CPU)
+				cpu[0] = 1;
 		}
 		arch = (void *)arch + sizeof(t_arch);
 	}
-	return (host_cpu);
+	return (cpu[0]);
 }

@@ -41,7 +41,7 @@ static int		handle_segment(t_data *d)
 	d->cmd = d->is_64 ? ((t_seg64 *)d->seg)->cmd : ((t_seg32 *)d->seg)->cmd;
 	d->cmd = swap32(d->cmd, d->swap);
 	if ((d->cmd == LC_SEGMENT_64 || d->cmd == LC_SEGMENT)
-			&& !ft_strcmp(d->segname, SEG_TEXT))
+			&& (!ft_strcmp(d->segname, SEG_TEXT) || d->filetype == MH_OBJECT))
 	{
 		d->nsects = d->is_64 ? swap32(((t_seg64 *)d->seg)->nsects, d->swap)
 							: swap32(((t_seg32 *)d->seg)->nsects, d->swap);
@@ -55,38 +55,39 @@ static int		handle_segment(t_data *d)
 	return (0);
 }
 
-static int		fill_data(t_data *d, char *ptr, int is_64)
+static int		fill_data(t_data *d, char *ptr)
 {
 	uint32_t		header_size;
 	unsigned int	magic;
 
 	magic = *(unsigned int *)ptr;
+	d->ptr = ptr;
+	d->is_64 = magic == MH_MAGIC_64 || magic == MH_CIGAM_64 ? 1 : 0;
 	d->display = 1;
 	d->swap = magic == MH_CIGAM || magic == MH_CIGAM_64 ? 1 : 0;
-	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
+	header_size = d->is_64 ? sizeof(t_header64) : sizeof(t_header32);
 	if (is_invalid_addr((void *)ptr + header_size, "ptr + header"))
 		return (1);
-	d->ptr = ptr;
-	d->is_64 = is_64;
-	d->ncmds = is_64 ? ((t_header64 *)ptr)->ncmds : ((t_header32 *)ptr)->ncmds;
+	d->ncmds = d->is_64 ? ((t_header64 *)ptr)->ncmds
+						: ((t_header32 *)ptr)->ncmds;
 	d->ncmds = swap32(d->ncmds, d->swap);
-	d->seg = is_64 ? (void *)ptr + sizeof(t_header64)
+	d->seg = d->is_64 ? (void *)ptr + sizeof(t_header64)
 					: (void *)ptr + sizeof(t_header32);
-	d->filetype = is_64 ? swap32(((t_header64 *)ptr)->filetype, d->swap)
+	d->filetype = d->is_64 ? swap32(((t_header64 *)ptr)->filetype, d->swap)
 						: swap32(((t_header32 *)ptr)->filetype, d->swap);
-	d->cpu = is_64 ? swap32(((t_header64 *)ptr)->cputype, d->swap)
-						: swap32(((t_header32 *)ptr)->cputype, d->swap);
+	d->cpu = d->is_64 ? swap32(((t_header64 *)ptr)->cputype, d->swap)
+					: swap32(((t_header32 *)ptr)->cputype, d->swap);
 	return (0);
 }
 
-void			handle_32_64(char *ptr, int is_64, char *av, int print)
+void			handle_32_64(char *ptr, char *av, int print, int is_nm)
 {
 	t_data		d;
 	uint32_t	i;
 
-	if (fill_data(&d, ptr, is_64))
+	if (fill_data(&d, ptr))
 		return ;
-	d.display = print_arch(d.cpu, av, OTOOL, print);
+	d.display = print_arch(d.cpu, av, is_nm, print);
 	i = -1;
 	while (++i < d.ncmds)
 	{

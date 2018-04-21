@@ -6,7 +6,7 @@
 #    By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/05/14 20:31:10 by agadiffe          #+#    #+#              #
-#    Updated: 2018/04/20 20:12:08 by agadiffe         ###   ########.fr        #
+#    Updated: 2018/04/21 00:33:01 by agadiffe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CFLAGS += -Wall -Werror -Wextra
 
 SRC_PATH = ./srcs/
 
-SRC_NAME_NM = main.c	\
+SRC_NAME_NM = main_nm.c	\
 			  get_type.c	\
 			  handle_32_64_nm.c	\
 			  handle_fat.c	\
@@ -33,7 +33,7 @@ SRC_NAME_NM = main.c	\
 			  swap.c	\
 			  sort_nlist.c
 
-SRC_NAME_OTOOL = main.c \
+SRC_NAME_OTOOL = main_otool.c \
 				 handle_32_64_otool.c	\
 				 handle_ar.c	\
 				 handle_fat.c	\

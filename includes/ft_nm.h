@@ -14,9 +14,6 @@
 # define NM		1
 # define OTOOL	0
 
-# define X64	1
-# define X86	0
-
 # define BASE16		"0123456789abcdef"
 
 # define NLIST64	((t_nlist64 *)d->array)
@@ -40,7 +37,7 @@ typedef struct segment_command		t_seg32;
 typedef struct section_64			t_sect64;
 typedef struct section				t_sect32;
 
-typedef struct		s_data
+typedef struct	s_data
 {
 	t_lc		*lc;
 	t_symtab	*sym;
@@ -54,24 +51,24 @@ typedef struct		s_data
 	uint32_t	cmd;
 	uint32_t	cmdsize;
 	uint32_t	ncmds;
-	uint64_t	n_value;
 	uint32_t	filetype;
+	uint64_t	n_value;
 	uint32_t	nsects;
 	uint8_t		n_type;
 	uint8_t		n_sect;
 	void		*array;
 	void		*sect;
 	void		*seg;
-}					t_data;
+}				t_data;
 
 /*
 **	nm & otool
 */
-int				handle_main(int ac, char **av);
-void			handle_arch(char *ptr, char *av, int print);
-void			handle_32_64(char *ptr, int is_64, char *av, int print);
-void			handle_fat(char *ptr, char *av);
-void			handle_ar(char *ptr, char *av);
+int				handle_main(int ac, char **av, int is_nm);
+void			handle_arch(char *ptr, char *av, int print, int is_nm);
+void			handle_32_64(char *ptr, char *av, int print, int is_nm);
+void			handle_fat(char *ptr, char *av, int is_nm);
+void			handle_ar(char *ptr, char *av, int print, int is_nm);
 int				is_invalid_addr(void *to_check, char *str);
 int				is_not_terminated_string(char *s, char *str);
 uint32_t		swap32(uint32_t value, int swap);

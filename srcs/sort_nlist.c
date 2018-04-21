@@ -50,7 +50,7 @@ int			sort_nlist_same_name(t_data *d)
 	uint32_t	j;
 	uint32_t	nsyms;
 	int			error;
-	
+
 	i = 1;
 	error = 0;
 	nsyms = swap32(d->sym->nsyms, d->swap);
