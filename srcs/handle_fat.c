@@ -11,7 +11,7 @@ static void		fat_arch(char *ptr, uint32_t n_fatarch, char *av, int is_nm)
 
 	swap = *(unsigned int *)ptr == FAT_CIGAM ? 1 : 0;
 	is_host_cpu = check_fat_host_arch(ptr, n_fatarch, swap);
-	if (is_host_cpu < 0)
+	if (is_host_cpu == -42)
 		return ;
 	arch = (void *)ptr + sizeof(t_headerfat);
 	i = -1;
@@ -25,6 +25,7 @@ static void		fat_arch(char *ptr, uint32_t n_fatarch, char *av, int is_nm)
 		if (is_nm && i + 1 != n_fatarch)
 			ft_putendl("");
 	}
+	get_arch_tab_printed(1, 0);
 }
 
 void			handle_fat(char *ptr, char *av, int is_nm)

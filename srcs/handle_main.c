@@ -78,6 +78,8 @@ int				handle_main(int ac, char **av, int is_nm)
 	i = 0;
 	while (++i < ac)
 	{
+		if (ac > 2)
+			ft_putendl(av[i]);
 		if (handle_file(av[i], &ptr, &st_size))
 			continue ;
 		g_max_addr = (void *)ptr + st_size;
@@ -90,6 +92,7 @@ int				handle_main(int ac, char **av, int is_nm)
 			ft_putendl_fd("Error: munmap() failed", 2);
 			continue ;
 		}
+		get_arch_tab_printed(1, 0);
 	}
 	return (EXIT_SUCCESS);
 }

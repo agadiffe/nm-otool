@@ -49,7 +49,7 @@ int			check_fat_host_arch(char *ptr, uint32_t n_fatarch, int swap)
 		if (is_32_or_64((void *)ptr + offset))
 		{
 			if ((cpu[1] = get_cpu((void *)ptr + offset)) < 0)
-				return (-1);
+				return (-42);
 			if (cpu[1] == HOST_CPU)
 				cpu[0] = 1;
 		}
