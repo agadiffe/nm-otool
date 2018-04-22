@@ -35,11 +35,16 @@ void			handle_arch(char *ptr, char *av, int print, int is_nm)
 	unsigned int	magic_nbr;
 
 	magic_nbr = *(unsigned int *)ptr;
-	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64)
-		handle_32_64(ptr, av, print, is_nm);
-	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
-		handle_32_64(ptr, av, print, is_nm);
-	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM)
+	if (magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64
+			|| magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
+	{
+		if (is_nm)
+			handle_32_64_nm(ptr, av, print, is_nm);
+		else
+			handle_32_64_otool(ptr, av, print, is_nm);
+	}
+	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM
+			|| magic_nbr == FAT_MAGIC_64 || magic_nbr == FAT_CIGAM_64)
 		handle_fat(ptr, av, is_nm);
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 		handle_ar(ptr, av, print, is_nm);

@@ -1,19 +1,46 @@
 #include "ft_nm.h"
 #include "libft.h"
 
+static int		get_cpu(char *ptr)
+{
+	int				cpu;
+	int				swap;
+	int				is_64;
+	unsigned int	magic_nbr;
+	uint32_t		header_size;
+
+	magic_nbr = *(unsigned int *)ptr;
+	if (!(magic_nbr == MH_CIGAM || magic_nbr == MH_MAGIC
+			|| magic_nbr == MH_CIGAM_64 || magic_nbr == MH_MAGIC_64))
+		return (0);
+	swap = magic_nbr == MH_CIGAM || magic_nbr == MH_CIGAM_64 ? 1 : 0;
+	is_64 = magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64 ? 1 : 0;
+	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
+	if (is_invalid_addr((void *)ptr + header_size, "fat member ptr + header"))
+		return (-42);
+	cpu = is_64 ? swap32(((t_header64 *)ptr)->cputype, swap)
+				: swap32(((t_header32 *)ptr)->cputype, swap);
+	return (cpu);
+}
+
 static void		print_ar_name(char *ptr, char *av, int is_nm, int print)
 {
 	static int		no_first;
+	int				cpu;
 
+	cpu = get_cpu(ptr);
+	is_ar(1, 0);
+	print_arch(cpu, av, is_nm, -2);
+	is_ar(1, 1);
 	if (!no_first && !is_nm)
 	{
 		no_first = 1;
 		ft_putstr("Archive : ");
 		ft_putstr(av);
-		if (print < 1)
+		if (print < 1 || !cpu)
 			ft_putendl("");
 		else
-			print_arch(get_cpu(ptr, 0), av, is_nm, 3);
+			print_arch(cpu, av, is_nm, 3);
 	}
 }
 
@@ -32,23 +59,14 @@ static int		print_name_member(t_ar *ar, uint32_t offset)
 	return (0);
 }
 
-static uint32_t	get_ar_name_offset(t_ar *ar)
-{
-	int		n;
-	char	*tmp;
-
-	n = 0;
-	if ((tmp = ft_strchr(ar->ar_name, '/')))
-		n = ft_atoi(tmp + 1);
-	return (n);
-}
-
 static int		print_ar(t_ar *ar, char *av, int print, int is_nm)
 {
 	void		*tmp;
 	uint32_t	n;
 
-	n = get_ar_name_offset(ar);
+	n = 0;
+	if ((tmp = ft_strchr(ar->ar_name, '/')))
+		n = ft_atoi(tmp + 1);
 	tmp = (void *)ar + sizeof(t_ar) + n;
 	if (is_invalid_addr(tmp, "ptr archive member"))
 		return (1);
@@ -61,7 +79,7 @@ static int		print_ar(t_ar *ar, char *av, int print, int is_nm)
 	if (print < 1)
 		ft_putendl(":");
 	else
-		print_arch(get_cpu(tmp, 0), av, is_nm, print);
+		print_arch(get_cpu(tmp), av, is_nm, print);
 	handle_arch(tmp, av, -2, is_nm);
 	is_ar(1, 1);
 	return (0);

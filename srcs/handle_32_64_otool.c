@@ -22,36 +22,32 @@ static int		handle_section(t_data *d)
 			if (print_32_64_otool(d))
 				return (1);
 		}
-		d->sect = d->sect + sect_size;
+		d->sect = (void *)d->sect + sect_size;
 	}
 	return (0);
 }
 
 static int		handle_segment(t_data *d)
 {
-	uint32_t	seg_size;
-
-	seg_size = d->is_64 ? sizeof(t_seg64) : sizeof(t_seg32);
-	if (is_invalid_addr((void *)d->seg + seg_size, "segment"))
+	if (is_invalid_addr((void *)d->lc + sizeof(t_lc), "segment"))
 		return (1);
-	d->segname = d->is_64 ? ((t_seg64 *)d->seg)->segname
-						: ((t_seg32 *)d->seg)->segname;
+	d->segname = d->is_64 ? ((t_seg64 *)d->lc)->segname
+						: ((t_seg32 *)d->lc)->segname;
 	if (is_not_terminated_string(d->segname, "segment name"))
 		return (1);
-	d->cmd = d->is_64 ? ((t_seg64 *)d->seg)->cmd : ((t_seg32 *)d->seg)->cmd;
+	d->cmd = d->is_64 ? ((t_seg64 *)d->lc)->cmd : ((t_seg32 *)d->lc)->cmd;
 	d->cmd = swap32(d->cmd, d->swap);
 	if ((d->cmd == LC_SEGMENT_64 || d->cmd == LC_SEGMENT)
 			&& (!ft_strcmp(d->segname, SEG_TEXT) || d->filetype == MH_OBJECT))
 	{
-		d->nsects = d->is_64 ? swap32(((t_seg64 *)d->seg)->nsects, d->swap)
-							: swap32(((t_seg32 *)d->seg)->nsects, d->swap);
-		d->sect = d->is_64 ? (void *)d->seg + sizeof(t_seg64)
-							: (void *)d->seg + sizeof(t_seg32);
+		d->nsects = d->is_64 ? swap32(((t_seg64 *)d->lc)->nsects, d->swap)
+							: swap32(((t_seg32 *)d->lc)->nsects, d->swap);
+		d->sect = d->is_64 ? (void *)d->lc + sizeof(t_seg64)
+							: (void *)d->lc + sizeof(t_seg32);
 		if (handle_section(d))
 			return (1);
 	}
-	d->seg = d->is_64 ? d->seg + swap32(((t_seg64 *)d->seg)->cmdsize, d->swap)
-					: d->seg + swap32(((t_seg32 *)d->seg)->cmdsize, d->swap);
+	d->lc = (void *)d->lc + swap32(((t_lc *)d->lc)->cmdsize, d->swap);
 	return (0);
 }
 
@@ -71,7 +67,7 @@ static int		fill_data(t_data *d, char *ptr)
 	d->ncmds = d->is_64 ? ((t_header64 *)ptr)->ncmds
 						: ((t_header32 *)ptr)->ncmds;
 	d->ncmds = swap32(d->ncmds, d->swap);
-	d->seg = d->is_64 ? (void *)ptr + sizeof(t_header64)
+	d->lc = d->is_64 ? (void *)ptr + sizeof(t_header64)
 					: (void *)ptr + sizeof(t_header32);
 	d->filetype = d->is_64 ? swap32(((t_header64 *)ptr)->filetype, d->swap)
 						: swap32(((t_header32 *)ptr)->filetype, d->swap);
@@ -80,18 +76,21 @@ static int		fill_data(t_data *d, char *ptr)
 	return (0);
 }
 
-void			handle_32_64(char *ptr, char *av, int print, int is_nm)
+int				handle_32_64_otool(char *ptr, char *av, int print, int is_nm)
 {
 	t_data		d;
 	uint32_t	i;
 
+	if (handle_32_64_nm(ptr, av, -2, 42))
+		return (0);
 	if (fill_data(&d, ptr))
-		return ;
+		return (1);
 	d.display = print_arch(d.cpu, av, is_nm, print);
 	i = -1;
 	while (++i < d.ncmds)
 	{
 		if (handle_segment(&d))
-			return ;
+			return (1);
 	}
+	return (0);
 }

@@ -24,9 +24,9 @@ typedef struct symtab_command		t_symtab;
 typedef struct mach_header_64		t_header64;
 typedef struct mach_header			t_header32;
 typedef struct fat_header			t_headerfat;
-typedef struct fat_arch				t_arch;
+typedef struct fat_arch_64			t_arch64;
+typedef struct fat_arch				t_arch32;
 typedef struct ar_hdr				t_ar;
-typedef struct ranlib				t_ranlib;
 typedef struct nlist_64				t_nlist64;
 typedef struct nlist				t_nlist32;
 typedef struct segment_command_64	t_seg64;
@@ -55,7 +55,6 @@ typedef struct	s_data
 	uint8_t		n_sect;
 	void		*array;
 	void		*sect;
-	void		*seg;
 }				t_data;
 
 /*
@@ -63,7 +62,6 @@ typedef struct	s_data
 */
 int				handle_main(int ac, char **av, int is_nm);
 void			handle_arch(char *ptr, char *av, int print, int is_nm);
-void			handle_32_64(char *ptr, char *av, int print, int is_nm);
 void			handle_fat(char *ptr, char *av, int is_nm);
 void			handle_ar(char *ptr, char *av, int print, int is_nm);
 int				is_invalid_addr(void *to_check, char *str);
@@ -72,9 +70,7 @@ uint32_t		swap32(uint32_t value, int swap);
 uint64_t		swap64(uint64_t value, int swap);
 int				print_arch(int cpu, char *av, int is_nm, int print);
 int				*get_arch_tab_printed(int reset, int reset_ar, int is_ar);
-int				check_fat_host_arch(char *ptr, uint32_t n_fatarch, int sp[4]);
-int				is_32_or_64(char *ptr);
-int				get_cpu(char *ptr, int save);
+int				check_fat_host_arch(char *ptr, uint32_t nsi[3], int sp[4]);
 void			**get_max_addr(void);
 void			**get_origin_addr(void);
 int				is_ar(int set, int value);
@@ -82,6 +78,7 @@ int				is_ar(int set, int value);
 /*
 **	nm
 */
+int				handle_32_64_nm(char *ptr, char *av, int print, int is_nm);
 char			get_type(t_data *d, uint32_t i);
 int				sort_nlist(t_data *d);
 int				sort_nlist_same_name(t_data *d);
@@ -90,6 +87,7 @@ int				print_32_64(t_data *d, uint32_t i);
 /*
 **	otool
 */
+int				handle_32_64_otool(char *ptr, char *av, int print, int is_nm);
 int				print_32_64_otool(t_data *d);
 
 #endif

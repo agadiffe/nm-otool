@@ -1,43 +1,13 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-int				is_32_or_64(char *ptr)
+static void		get_nbr_arch_to_print(int sp[4], int host_cpu)
 {
-	unsigned int	magic_nbr;
-
-	magic_nbr = *(unsigned int *)ptr;
-	return (magic_nbr == MH_CIGAM || magic_nbr == MH_MAGIC
-			|| magic_nbr == MH_CIGAM_64 || magic_nbr == MH_MAGIC_64);
-}
-
-int				get_cpu(char *ptr, int save)
-{
-	int				cpu;
-	int				swap;
-	int				is_64;
-	unsigned int	magic_nbr;
-	uint32_t		header_size;
-
-	magic_nbr = *(unsigned int *)ptr;
-	swap = magic_nbr == MH_CIGAM || magic_nbr == MH_CIGAM_64 ? 1 : 0;
-	is_64 = magic_nbr == MH_MAGIC_64 || magic_nbr == MH_CIGAM_64 ? 1 : 0;
-	header_size = is_64 ? sizeof(t_header64) : sizeof(t_header32);
-	if (is_invalid_addr((void *)ptr + header_size, "fat member ptr + header"))
-		return (-42);
-	cpu = is_64 ? swap32(((t_header64 *)ptr)->cputype, swap)
-				: swap32(((t_header32 *)ptr)->cputype, swap);
-	if (save)
-		print_arch(cpu, "", 1, -2);
-	return (cpu);
-}
-
-static void		get_nbr_arch_to_print(int sp[4], int cpu_host)
-{
-	int		*tab;
+	int			*tab;
 	uint32_t	i;
 
-	if (cpu_host)
-		sp[1] += 1;
+	if (host_cpu)
+		sp[1] = 1;
 	else
 	{
 		tab = get_arch_tab_printed(0, 0, 1);
@@ -50,47 +20,43 @@ static void		get_nbr_arch_to_print(int sp[4], int cpu_host)
 	}
 }
 
-static int		handle_host_cpu(char *ptr, int sp[4])
+static int		handle_host_cpu(void *arch, int *cpu, uint32_t nsi[3])
 {
-	int		cpu;
+	int		current_cpu;
 
-	if (is_32_or_64(ptr))
-	{
-		if ((cpu = get_cpu(ptr, 1)) < 0)
-			return (-42);
-		if (cpu == HOST_CPU)
-			return (1);
-	}
-	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
-		sp[1] += 1;
+	is_ar(1, 1);
+	current_cpu = nsi[2] ? swap32(((t_arch64 *)arch)->cputype, nsi[1])
+						: swap32(((t_arch32 *)arch)->cputype, nsi[1]);
+	if (current_cpu == HOST_CPU)
+		*cpu = 1;
+	print_arch(current_cpu, "", 1, -2);
+	is_ar(1, 0);
 	return (0);
 }
 
-int				check_fat_host_arch(char *ptr, uint32_t n_fatarch, int sp[4])
+int				check_fat_host_arch(char *ptr, uint32_t nsi[3], int sp[4])
 {
-	t_arch		*arch;
+	void		*arch;
+	uint32_t	header_size;
 	uint32_t	i;
 	uint32_t	offset;
-	int			cpu[2];
+	int			host_cpu;
 
-	is_ar(1, 1);
-	cpu[1] = 0;
+	host_cpu = 0;
 	arch = (void *)ptr + sizeof(t_headerfat);
+	header_size = nsi[2] ? sizeof(t_arch64) : sizeof(t_arch32);
 	i = -1;
-	while (++i != n_fatarch)
+	while (++i != nsi[0])
 	{
-		if (is_invalid_addr((void *)arch + sizeof(t_arch), "fat ptr + header"))
+		if (is_invalid_addr((void *)arch + header_size, "fat ptr +header"))
 			return (-42);
-		offset = swap32(arch->offset, sp[0]);
+		offset = nsi[2] ? swap64(((t_arch64 *)arch)->offset, nsi[1])
+						: swap32(((t_arch32 *)arch)->offset, nsi[1]);
 		if (is_invalid_addr((void *)ptr + offset, "fat member ptr"))
 			return (-42);
-		if ((cpu[0] = handle_host_cpu((void *)ptr + offset, sp)) == -42)
-			return (-42);
-		if (cpu[0])
-			cpu[1] = cpu[0];
-		arch = (void *)arch + sizeof(t_arch);
+		handle_host_cpu(arch, &host_cpu, nsi);
+		arch = (void *)arch + header_size;
 	}
-	get_nbr_arch_to_print(sp, cpu[1]);
-	is_ar(1, 0);
-	return (cpu[1]);
+	get_nbr_arch_to_print(sp, host_cpu);
+	return (host_cpu);
 }

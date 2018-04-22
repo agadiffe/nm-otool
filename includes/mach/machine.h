@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2007-2016 Apple, Inc. All rights reserved.
- * Copyright (c) 2000 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2000-2007 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -65,9 +64,7 @@
 
 #include <stdint.h>
 //#include <mach/machine/vm_types.h>
-#include "./boolean.h"
-
-typedef int			integer_t;
+#include "./mach/boolean.h"
 
 typedef integer_t	cpu_type_t;
 typedef integer_t	cpu_subtype_t;
@@ -80,50 +77,6 @@ typedef integer_t	cpu_threadtype_t;
 #define CPU_STATE_IDLE		2
 #define CPU_STATE_NICE		3
 
-#ifdef	KERNEL_PRIVATE
-
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
-cpu_type_t			cpu_type(void);
-
-cpu_subtype_t		cpu_subtype(void);
-
-cpu_threadtype_t	cpu_threadtype(void);
-__END_DECLS
-
-#ifdef	MACH_KERNEL_PRIVATE
-
-struct machine_info {
-	integer_t	major_version;		/* kernel major version id */
-	integer_t	minor_version;		/* kernel minor version id */
-	integer_t	max_cpus;			/* max number of CPUs possible */
-	uint32_t	memory_size;		/* size of memory in bytes, capped at 2 GB */
-	uint64_t	max_mem;			/* actual size of physical memory */
-	uint32_t	physical_cpu;		/* number of physical CPUs now available */
-	integer_t	physical_cpu_max;	/* max number of physical CPUs possible */
-	uint32_t	logical_cpu;		/* number of logical cpu now available */
-	integer_t	logical_cpu_max;	/* max number of physical CPUs possible */
-};
-
-typedef struct machine_info	*machine_info_t;
-typedef struct machine_info	machine_info_data_t;
-
-extern struct machine_info	machine_info;
-
-__BEGIN_DECLS
-cpu_type_t			slot_type(
-						int		slot_num);
-
-cpu_subtype_t		slot_subtype(
-						int		slot_num);
-
-cpu_threadtype_t	slot_threadtype(
-						int		slot_num);
-__END_DECLS
-
-#endif	/* MACH_KERNEL_PRIVATE */
-#endif	/* KERNEL_PRIVATE */
 
 
 /*
@@ -396,7 +349,6 @@ __END_DECLS
 #define CPUFAMILY_INTEL_HASWELL		0x10b282dc
 #define CPUFAMILY_INTEL_BROADWELL	0x582ed09c
 #define CPUFAMILY_INTEL_SKYLAKE		0x37fc219f
-#define CPUFAMILY_INTEL_KABYLAKE	0x0f817246
 #define CPUFAMILY_ARM_9			0xe73283ae
 #define CPUFAMILY_ARM_11		0x8ff620d8
 #define CPUFAMILY_ARM_XSCALE		0x53b005f5

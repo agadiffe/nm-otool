@@ -6,7 +6,7 @@
 #    By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/05/14 20:31:10 by agadiffe          #+#    #+#              #
-#    Updated: 2018/04/22 01:23:56 by agadiffe         ###   ########.fr        #
+#    Updated: 2018/04/22 22:26:38 by agadiffe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,26 +24,32 @@ SRC_PATH = ./srcs/
 SRC_NAME_NM = main_nm.c	\
 			  get_type.c	\
 			  handle_32_64_nm.c	\
+			  handle_32_64_otool.c	\
+			  handle_ar.c	\
 			  handle_fat.c	\
 			  handle_fat_nohostcpu.c	\
-			  handle_ar.c	\
 			  handle_main.c	\
-			  print_nm.c	\
-			  print_arch.c	\
 			  swap.c	\
+			  print_nm.c	\
+			  print_otool.c	\
+			  print_arch.c	\
 			  singleton.c	\
 			  sort_nlist.c
 
 SRC_NAME_OTOOL = main_otool.c \
+				 get_type.c	\
+				 handle_32_64_nm.c	\
 				 handle_32_64_otool.c	\
 				 handle_ar.c	\
 				 handle_fat.c	\
 				 handle_fat_nohostcpu.c	\
 				 handle_main.c	\
 				 swap.c	\
+				 print_nm.c	\
+				 print_otool.c	\
 				 print_arch.c	\
 				 singleton.c	\
-				 print_otool.c
+				 sort_nlist.c
 
 OBJ_PATH = ./obj/
 OBJ_NAME_NM = $(SRC_NAME_NM:.c=.o)

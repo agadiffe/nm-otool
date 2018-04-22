@@ -49,14 +49,14 @@ static int		fill_data(t_data *d, char *ptr)
 	return (0);
 }
 
-void			handle_32_64(char *ptr, char *av, int print, int is_nm)
+int				handle_32_64_nm(char *ptr, char *av, int print, int is_nm)
 {
 	uint32_t		i;
 	t_data			d;
 	t_lc			*tmp;
 
 	if (fill_data(&d, ptr))
-		return ;
+		return (1);
 	if (print)
 		d.display = print_arch(d.cpu, av, is_nm, print);
 	tmp = d.lc;
@@ -64,15 +64,16 @@ void			handle_32_64(char *ptr, char *av, int print, int is_nm)
 	while (++i < d.ncmds)
 	{
 		if (is_invalid_addr((void *)tmp + sizeof(t_lc), "load command"))
-			return ;
+			return (1);
 		if (swap32(tmp->cmd, d.swap) == LC_SYMTAB)
 		{
 			d.sym = (t_symtab *)tmp;
 			if (is_invalid_addr((void *)d.sym + sizeof(t_symtab), "symtab"))
-				return ;
+				return (1);
 			if (handle_symtab(&d))
-				return ;
+				return (1);
 		}
 		tmp = (void *)tmp + swap32(tmp->cmdsize, d.swap);
 	}
+	return (0);
 }

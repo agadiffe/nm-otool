@@ -25,6 +25,8 @@ int				*get_arch_tab_printed(int reset, int reset_ar, int is_ar)
 
 static int		print_info(char *av, char *arch, int is_nm, int print)
 {
+	if (is_nm == 42)
+		return (0);
 	if (print != -2)
 	{
 		if (!is_ar(0, 0))
@@ -52,8 +54,7 @@ static int		print_arch_bis(int cpu, char *av, int is_nm, int print)
 	int		ar;
 
 	ar = is_ar(0, 0);
-	tab = ar ? get_arch_tab_printed(0, 0, 1)
-						: get_arch_tab_printed(0, 0, 0);
+	tab = ar ? get_arch_tab_printed(0, 0, 1) : get_arch_tab_printed(0, 0, 0);
 	if ((ar || !tab[8]) && cpu == CPU_TYPE_HPPA)
 		return ((tab[8] = print_info(av, "hppa", is_nm, print)));
 	if ((ar || !tab[9]) && cpu == CPU_TYPE_ARM)
@@ -73,8 +74,7 @@ int				print_arch(int cpu, char *av, int is_nm, int print)
 	int		ar;
 
 	ar = is_ar(0, 0);
-	tab = ar ? get_arch_tab_printed(0, 0, 1)
-				: get_arch_tab_printed(0, 0, 0);
+	tab = ar ? get_arch_tab_printed(0, 0, 1) : get_arch_tab_printed(0, 0, 0);
 	if ((ar || !tab[0])
 			&& (cpu == CPU_TYPE_X86 || cpu == CPU_TYPE_I386))
 		return ((tab[0] = print_info(av, "i386", is_nm, print)));

@@ -129,14 +129,6 @@ typedef int		vm_prot_t;
 
 #define VM_PROT_WANTS_COPY	((vm_prot_t) 0x10)
 
-#ifdef PRIVATE
-/*
- *	The caller wants this memory region treated as if it had a valid
- *	code signature.
- */
-
-#define VM_PROT_TRUSTED		((vm_prot_t) 0x20)
-#endif /* PRIVATE */
 
 /*
  * 	Another invalid protection value.
@@ -156,5 +148,11 @@ typedef int		vm_prot_t;
  */
 #define VM_PROT_STRIP_READ		((vm_prot_t) 0x80)
 #define VM_PROT_EXECUTE_ONLY	(VM_PROT_EXECUTE|VM_PROT_STRIP_READ)
+
+
+#define VM_PROT_MEMORY_TAG_MASK		0xFF000000
+#define VM_PROT_MEMORY_TAG_SHIFT	24
+#define VM_PROT_MEMORY_TAG(x)		(((x) >> VM_PROT_MEMORY_TAG_SHIFT) & 0xFF)
+#define VM_PROT_MEMORY_TAG_MAKE(x)	(((x) & 0xFF) << VM_PROT_MEMORY_TAG_SHIFT)
 
 #endif	/* _MACH_VM_PROT_H_ */
