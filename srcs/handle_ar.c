@@ -1,7 +1,7 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-static void		print_ar_name(char *ptr, char *av, int is_nm)
+static void		print_ar_name(char *ptr, char *av, int is_nm, int print)
 {
 	static int		no_first;
 
@@ -10,7 +10,10 @@ static void		print_ar_name(char *ptr, char *av, int is_nm)
 		no_first = 1;
 		ft_putstr("Archive : ");
 		ft_putstr(av);
-		print_arch(get_cpu(ptr), av, 2, 3);
+		if (print < 1)
+			ft_putendl("");
+		else
+			print_arch(get_cpu(ptr, 0), av, is_nm, 3);
 	}
 }
 
@@ -49,17 +52,18 @@ static int		print_ar(t_ar *ar, char *av, int print, int is_nm)
 	tmp = (void *)ar + sizeof(t_ar) + n;
 	if (is_invalid_addr(tmp, "ptr archive member"))
 		return (1);
-	print_ar_name(tmp, av, is_nm);
+	print_ar_name(tmp, av, is_nm, print);
 	ft_putstr(av);
 	ft_putchar('(');
 	if (print_name_member(ar, n))
 		return (1);
 	ft_putchar(')');
-	if (!print)
+	if (print < 1)
 		ft_putendl(":");
 	else
-		print_arch(get_cpu(tmp), av, 2, print);
-	handle_arch(tmp, av, -2, 2);
+		print_arch(get_cpu(tmp, 0), av, is_nm, print);
+	handle_arch(tmp, av, -2, is_nm);
+	is_ar(1, 1);
 	return (0);
 }
 
@@ -68,6 +72,7 @@ void			handle_ar(char *ptr, char *av, int print, int is_nm)
 	t_ar	*ar;
 	int		first;
 
+	is_ar(1, 1);
 	ar = (void *)ptr + SARMAG;
 	if (is_invalid_addr((void *)ar + sizeof(t_ar), "ptr archive"))
 		return ;
@@ -75,7 +80,7 @@ void			handle_ar(char *ptr, char *av, int print, int is_nm)
 		return ;
 	ar = (void *)ar + sizeof(t_ar) + ft_atoi(ar->ar_size);
 	first = 1;
-	while ((void *)ar < g_max_addr)
+	while ((void *)ar < *get_max_addr())
 	{
 		if (ft_strncmp(ar->ar_fmag, ARFMAG, 2))
 			break ;
@@ -88,4 +93,5 @@ void			handle_ar(char *ptr, char *av, int print, int is_nm)
 			return ;
 		ar = (void *)ar + sizeof(t_ar) + ft_atoi(ar->ar_size);
 	}
+	is_ar(1, 0);
 }

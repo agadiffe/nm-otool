@@ -7,11 +7,12 @@ static void		fat_arch(char *ptr, uint32_t n_fatarch, char *av, int is_nm)
 	uint32_t	i;
 	uint32_t	offset;
 	int			is_host_cpu;
-	int			sp[2];
+	int			sp[4];
 
 	sp[1] = 0;
 	sp[0] = *(unsigned int *)ptr == FAT_CIGAM ? 1 : 0;
-	is_host_cpu = check_fat_host_arch(ptr, n_fatarch, sp[0], &sp[1]);
+	is_host_cpu = check_fat_host_arch(ptr, n_fatarch, sp);
+	sp[2] = sp[1];
 	if (is_host_cpu == -42)
 		return ;
 	arch = (void *)ptr + sizeof(t_headerfat);
@@ -20,14 +21,13 @@ static void		fat_arch(char *ptr, uint32_t n_fatarch, char *av, int is_nm)
 	{
 		offset = swap32(arch->offset, sp[0]);
 		if (!is_host_cpu || !is_32_or_64((void *)ptr + offset)
-				|| get_cpu((void *)ptr + offset) == HOST_CPU)
+				|| get_cpu((void *)ptr + offset, 0) == HOST_CPU)
 			handle_arch((void *)ptr + offset, av,
-						(sp[1] > 1 || !is_nm) && !is_host_cpu ? 1 : -2 , is_nm);
+						sp[1] > 1 || !is_nm ? sp[1] > 1 : -2 , is_nm);
 		arch = (void *)arch + sizeof(t_arch);
-		if (is_nm && sp[1] > 1 && i + 1 != n_fatarch)
+		if (is_nm && --sp[2] > 0)
 			ft_putendl("");
 	}
-	get_arch_tab_printed(1, 1, 0);
 }
 
 void			handle_fat(char *ptr, char *av, int is_nm)
@@ -36,6 +36,7 @@ void			handle_fat(char *ptr, char *av, int is_nm)
 	unsigned int	magic_nbr;
 	int				swap;
 
+	is_ar(1, 0);
 	magic_nbr = *(unsigned int *)ptr;
 	if (is_invalid_addr((void *)ptr + sizeof(t_headerfat), "fat ptr"))
 		return ;

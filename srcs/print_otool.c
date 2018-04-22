@@ -33,7 +33,7 @@ static int		handle_print_addr(void *ptr, uint64_t addr,
 									uint64_t size, t_data *d)
 {
 	if (is_invalid_addr((void *)ptr + size, "print_otool ptr + size")
-			|| is_invalid_addr(g_origin_addr + (uint32_t)addr + size,
+			|| is_invalid_addr(*get_origin_addr() + (uint32_t)addr + size,
 								"print_otool addr + size"))
 		return (1);
 	if (d->display)

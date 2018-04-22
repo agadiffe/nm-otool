@@ -19,9 +19,6 @@
 # define NLIST64	((t_nlist64 *)d->array)
 # define NLIST32	((t_nlist32 *)d->array)
 
-void		*g_max_addr;
-void		*g_origin_addr;
-
 typedef struct load_command			t_lc;
 typedef struct symtab_command		t_symtab;
 typedef struct mach_header_64		t_header64;
@@ -75,10 +72,12 @@ uint32_t		swap32(uint32_t value, int swap);
 uint64_t		swap64(uint64_t value, int swap);
 int				print_arch(int cpu, char *av, int is_nm, int print);
 int				*get_arch_tab_printed(int reset, int reset_ar, int is_ar);
-int				check_fat_host_arch(char *ptr, uint32_t n_fatarch,
-									int swap, int *print);
+int				check_fat_host_arch(char *ptr, uint32_t n_fatarch, int sp[4]);
 int				is_32_or_64(char *ptr);
-int				get_cpu(char *ptr);
+int				get_cpu(char *ptr, int save);
+void			**get_max_addr(void);
+void			**get_origin_addr(void);
+int				is_ar(int set, int value);
 
 /*
 **	nm

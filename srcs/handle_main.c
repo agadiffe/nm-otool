@@ -8,7 +8,7 @@
 
 int				is_not_terminated_string(char *s, char *str)
 {
-	while ((void *)s < g_max_addr)
+	while ((void *)s < *get_max_addr())
 	{
 		if (*s == '\0')
 			return (0);
@@ -21,7 +21,7 @@ int				is_not_terminated_string(char *s, char *str)
 
 int				is_invalid_addr(void *to_check, char *str)
 {
-	if (to_check > g_max_addr || to_check < g_origin_addr)
+	if (to_check > *get_max_addr() || to_check < *get_origin_addr())
 	{
 		ft_putstr_fd("file data error: ", 2);
 		ft_putendl_fd(str, 2);
@@ -40,9 +40,9 @@ void			handle_arch(char *ptr, char *av, int print, int is_nm)
 	else if (magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
 		handle_32_64(ptr, av, print, is_nm);
 	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM)
-		handle_fat(ptr, av, is_nm > 0);
+		handle_fat(ptr, av, is_nm);
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
-		handle_ar(ptr, av, print, is_nm > 0);
+		handle_ar(ptr, av, print, is_nm);
 	else
 		ft_putendl_fd("Invalid Architecture", 2);
 }
@@ -51,6 +51,8 @@ static int		handle_file(char *av, char **ptr, size_t *st_size)
 {
 	int				fd;
 	struct stat		buf;
+	void			**max_addr;
+	void			**origin_addr;
 
 	if ((fd = open(av, O_RDONLY)) < 0)
 		return (ft_error_ret("Error: Can't open file", 1));
@@ -66,6 +68,10 @@ static int		handle_file(char *av, char **ptr, size_t *st_size)
 		return (ft_error_ret("Error: Invalid file", 1));
 	}
 	close(fd);
+	max_addr = get_max_addr();
+	origin_addr = get_origin_addr();
+	*max_addr = (void *)*ptr + buf.st_size;
+	*origin_addr = (void *)*ptr;
 	return (0);
 }
 
@@ -82,8 +88,6 @@ int				handle_main(int ac, char **av, int is_nm)
 			ft_putendl(av[i]);
 		if (handle_file(av[i], &ptr, &st_size))
 			continue ;
-		g_max_addr = (void *)ptr + st_size;
-		g_origin_addr = (void *)ptr;
 		handle_arch(ptr, av[i], 0, is_nm);
 		if (i + 1 < ac)
 			ft_putendl("");
@@ -93,6 +97,7 @@ int				handle_main(int ac, char **av, int is_nm)
 			continue ;
 		}
 		get_arch_tab_printed(1, 1, 0);
+		is_ar(1, 0);
 	}
 	return (EXIT_SUCCESS);
 }

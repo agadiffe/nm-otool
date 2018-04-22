@@ -6,7 +6,7 @@
 #    By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/05/14 20:31:10 by agadiffe          #+#    #+#              #
-#    Updated: 2018/04/21 00:33:01 by agadiffe         ###   ########.fr        #
+#    Updated: 2018/04/22 01:23:56 by agadiffe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ SRC_NAME_NM = main_nm.c	\
 			  print_nm.c	\
 			  print_arch.c	\
 			  swap.c	\
+			  singleton.c	\
 			  sort_nlist.c
 
 SRC_NAME_OTOOL = main_otool.c \
@@ -41,6 +42,7 @@ SRC_NAME_OTOOL = main_otool.c \
 				 handle_main.c	\
 				 swap.c	\
 				 print_arch.c	\
+				 singleton.c	\
 				 print_otool.c
 
 OBJ_PATH = ./obj/
