@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_fat.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/23 00:51:40 by agadiffe          #+#    #+#             */
+/*   Updated: 2018/04/23 00:51:50 by agadiffe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_nm.h"
 #include "libft.h"
 
@@ -32,7 +44,7 @@ static void		fat_arch_32(char *ptr, uint32_t nsi[3], char *av, int is_nm)
 						: swap32(((t_arch32 *)arch)->cputype, nsi[1]);
 		if (!is_host_cpu || (sp[3] == HOST_CPU && !check_host()))
 			handle_arch((void *)ptr + offset, av,
-						sp[1] > 1 || !is_nm ? sp[1] > 1 : -2 , is_nm);
+						sp[1] > 1 || !is_nm ? sp[1] > 1 : -2, is_nm);
 		arch = (void *)arch + (nsi[2] ? sizeof(t_arch64) : sizeof(t_arch32));
 		is_nm && --sp[2] > 0 ? ft_putendl("") : 0;
 	}
