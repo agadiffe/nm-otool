@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:51:34 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:51:36 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 19:40:41 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@ static int		get_cpu(char *ptr)
 	return (cpu);
 }
 
-static void		print_ar_name(char *ptr, char *av, int is_nm, int print)
+static int		print_ar_name(char *ptr, char *av, int is_nm, int print)
 {
 	static int		no_first;
 	int				cpu;
 
-	cpu = get_cpu(ptr);
+	if ((cpu = get_cpu(ptr)) == -42)
+		return (1);
 	is_ar(1, 0);
 	print_arch(cpu, av, is_nm, -2);
 	is_ar(1, 1);
@@ -54,6 +55,7 @@ static void		print_ar_name(char *ptr, char *av, int is_nm, int print)
 		else
 			print_arch(cpu, av, is_nm, 3);
 	}
+	return (0);
 }
 
 static int		print_name_member(t_ar *ar, uint32_t offset)
@@ -82,7 +84,8 @@ static int		print_ar(t_ar *ar, char *av, int print, int is_nm)
 	tmp = (void *)ar + sizeof(t_ar) + n;
 	if (is_invalid_addr(tmp, "ptr archive member"))
 		return (1);
-	print_ar_name(tmp, av, is_nm, print);
+	if (print_ar_name(tmp, av, is_nm, print))
+		return (1);
 	ft_putstr(av);
 	ft_putchar('(');
 	if (print_name_member(ar, n))
@@ -97,7 +100,7 @@ static int		print_ar(t_ar *ar, char *av, int print, int is_nm)
 	return (0);
 }
 
-void			handle_ar(char *ptr, char *av, int print, int is_nm)
+int				handle_ar(char *ptr, char *av, int print, int is_nm)
 {
 	t_ar	*ar;
 	int		first;
@@ -105,9 +108,9 @@ void			handle_ar(char *ptr, char *av, int print, int is_nm)
 	is_ar(1, 1);
 	ar = (void *)ptr + SARMAG;
 	if (is_invalid_addr((void *)ar + sizeof(t_ar), "ptr archive"))
-		return ;
+		return (1);
 	if (is_not_terminated_string(ar->ar_size, "archive size"))
-		return ;
+		return (1);
 	ar = (void *)ar + sizeof(t_ar) + ft_atoi(ar->ar_size);
 	first = 1;
 	while ((void *)ar < *get_max_addr())
@@ -118,10 +121,10 @@ void			handle_ar(char *ptr, char *av, int print, int is_nm)
 			ft_putendl("");
 		first = 0;
 		if (print_ar(ar, av, print, is_nm))
-			return ;
+			return (1);
 		if (is_not_terminated_string(ar->ar_size, "archive size"))
-			return ;
+			return (1);
 		ar = (void *)ar + sizeof(t_ar) + ft_atoi(ar->ar_size);
 	}
-	is_ar(1, 0);
+	return (is_ar(1, 0));
 }

@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:54:45 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 16:47:56 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 19:29:08 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ typedef struct	s_data
 **	nm & otool
 */
 int				handle_main(int ac, char **av, int is_nm);
-void			handle_arch(char *ptr, char *av, int print, int is_nm);
-void			handle_fat(char *ptr, char *av, int is_nm);
-void			handle_ar(char *ptr, char *av, int print, int is_nm);
+int				handle_arch(char *ptr, char *av, int print, int is_nm);
+int				handle_fat(char *ptr, char *av, int is_nm);
+int				handle_ar(char *ptr, char *av, int print, int is_nm);
 int				is_invalid_addr(void *to_check, char *str);
 int				is_not_terminated_string(char *s, char *str);
 uint32_t		swap32(uint32_t value, int swap);

@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:51:53 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:52:01 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 19:28:20 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int				check_fat_host_arch(char *ptr, uint32_t nsi[3], int sp[4])
 		handle_host_cpu(arch, &host_cpu, nsi);
 		arch = (void *)arch + header_size;
 	}
+	sp[1] = 0;
 	get_nbr_arch_to_print(sp, host_cpu);
 	return (host_cpu);
 }

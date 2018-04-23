@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:52:03 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 18:05:28 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 19:49:39 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-void			handle_arch(char *ptr, char *av, int print, int is_nm)
+int				handle_arch(char *ptr, char *av, int print, int is_nm)
 {
 	unsigned int	magic_nbr;
 
@@ -26,17 +26,18 @@ void			handle_arch(char *ptr, char *av, int print, int is_nm)
 			|| magic_nbr == MH_MAGIC || magic_nbr == MH_CIGAM)
 	{
 		if (is_nm)
-			handle_32_64_nm(ptr, av, print, is_nm);
+			return (handle_32_64_nm(ptr, av, print, is_nm));
 		else
-			handle_32_64_otool(ptr, av, print, is_nm);
+			return (handle_32_64_otool(ptr, av, print, is_nm));
 	}
 	else if (magic_nbr == FAT_MAGIC || magic_nbr == FAT_CIGAM
 			|| magic_nbr == FAT_MAGIC_64 || magic_nbr == FAT_CIGAM_64)
-		handle_fat(ptr, av, is_nm);
+		return (handle_fat(ptr, av, is_nm));
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
-		handle_ar(ptr, av, print, is_nm);
+		return (handle_ar(ptr, av, print, is_nm));
 	else
 		ft_putendl_fd("Invalid Architecture", 2);
+	return (1);
 }
 
 static int		handle_file(char *av, char **ptr, size_t *st_size)
@@ -70,26 +71,28 @@ static int		handle_file(char *av, char **ptr, size_t *st_size)
 int				handle_main(int ac, char **av, int is_nm)
 {
 	int		i;
+	int		ret;
 	char	*ptr;
 	size_t	st_size;
 
+	ret = 0;
 	i = 0;
 	while (++i < ac)
 	{
 		if (ac > 2)
 			get_ac(1);
-		if (handle_file(av[i], &ptr, &st_size))
+		if ((ret += handle_file(av[i], &ptr, &st_size)))
 			continue ;
-		handle_arch(ptr, av[i], 0, is_nm);
+		ret += handle_arch(ptr, av[i], 0, is_nm);
 		if (i + 1 < ac)
 			ft_putendl("");
 		if (munmap(ptr, st_size) < 0)
 		{
-			ft_putendl_fd("Error: munmap() failed", 2);
+			ret += ft_error_ret("Error: munmap() failed", 1);
 			continue ;
 		}
 		get_arch_tab_printed(1, 1, 0);
 		is_ar(1, 0);
 	}
-	return (0);
+	return (ret > 0);
 }
