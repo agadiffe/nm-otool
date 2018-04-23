@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:51:22 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:51:26 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 18:02:20 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int				handle_32_64_otool(char *ptr, char *av, int print, int is_nm)
 	uint32_t	i;
 
 	if (handle_32_64_nm(ptr, av, -2, 42))
-		return (0);
+		return (1);
 	if (fill_data(&d, ptr))
 		return (1);
 	d.display = print_arch(d.cpu, av, is_nm, print);

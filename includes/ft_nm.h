@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:54:45 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:54:48 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 16:47:56 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ int				check_fat_host_arch(char *ptr, uint32_t nsi[3], int sp[4]);
 void			**get_max_addr(void);
 void			**get_origin_addr(void);
 int				is_ar(int set, int value);
+int				get_ac(int set);
 
 /*
 **	nm

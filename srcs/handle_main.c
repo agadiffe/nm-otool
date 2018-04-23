@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:52:03 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:52:12 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 18:05:28 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,7 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <stdlib.h>
 #include <unistd.h>
-
-int				is_not_terminated_string(char *s, char *str)
-{
-	while ((void *)s < *get_max_addr())
-	{
-		if (*s == '\0')
-			return (0);
-		s++;
-	}
-	ft_putstr_fd("file data error: ", 2);
-	ft_putendl_fd(str, 2);
-	return (1);
-}
-
-int				is_invalid_addr(void *to_check, char *str)
-{
-	if (to_check > *get_max_addr() || to_check < *get_origin_addr())
-	{
-		ft_putstr_fd("file data error: ", 2);
-		ft_putendl_fd(str, 2);
-		return (1);
-	}
-	return (0);
-}
 
 void			handle_arch(char *ptr, char *av, int print, int is_nm)
 {
@@ -102,7 +77,7 @@ int				handle_main(int ac, char **av, int is_nm)
 	while (++i < ac)
 	{
 		if (ac > 2)
-			ft_putendl(av[i]);
+			get_ac(1);
 		if (handle_file(av[i], &ptr, &st_size))
 			continue ;
 		handle_arch(ptr, av[i], 0, is_nm);
@@ -116,5 +91,5 @@ int				handle_main(int ac, char **av, int is_nm)
 		get_arch_tab_printed(1, 1, 0);
 		is_ar(1, 0);
 	}
-	return (EXIT_SUCCESS);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:50:21 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:51:16 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 17:17:25 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,7 @@ int				handle_32_64_nm(char *ptr, char *av, int print, int is_nm)
 
 	if (fill_data(&d, ptr))
 		return (1);
-	if (print)
-		d.display = print_arch(d.cpu, av, is_nm, print);
+	d.display = print_arch(d.cpu, av, is_nm, print);
 	tmp = d.lc;
 	i = -1;
 	while (++i < d.ncmds)

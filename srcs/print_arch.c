@@ -6,7 +6,7 @@
 /*   By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 00:52:48 by agadiffe          #+#    #+#             */
-/*   Updated: 2018/04/23 00:52:52 by agadiffe         ###   ########.fr       */
+/*   Updated: 2018/04/23 17:47:23 by agadiffe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,17 @@ int				*get_arch_tab_printed(int reset, int reset_ar, int is_ar)
 	return (is_ar ? tab_ar : tab);
 }
 
+static void		print_av_multiple_arg(char *av)
+{
+	ft_putstr(av);
+	ft_putendl(":");
+}
+
 static int		print_info(char *av, char *arch, int is_nm, int print)
 {
 	if (is_nm == 42)
 		return (0);
-	if (print != -2)
+	if (print != -2 && !(!print && is_nm))
 	{
 		if (!is_ar(0, 0))
 			ft_putstr(av);
@@ -57,6 +63,8 @@ static int		print_info(char *av, char *arch, int is_nm, int print)
 		else
 			ft_putendl("");
 	}
+	else if (is_nm && get_ac(0) && print != -2 && !is_ar(0, 0))
+		print_av_multiple_arg(av);
 	return (1);
 }
 

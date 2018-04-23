@@ -6,7 +6,7 @@
 #    By: agadiffe <agadiffe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/05/14 20:31:10 by agadiffe          #+#    #+#              #
-#    Updated: 2018/04/22 22:26:38 by agadiffe         ###   ########.fr        #
+#    Updated: 2018/04/23 16:45:34 by agadiffe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ SRC_NAME_NM = main_nm.c	\
 			  print_otool.c	\
 			  print_arch.c	\
 			  singleton.c	\
-			  sort_nlist.c
+			  sort_nlist.c	\
+			  check_corrupted_file.c
 
 SRC_NAME_OTOOL = main_otool.c \
 				 get_type.c	\
@@ -49,7 +50,8 @@ SRC_NAME_OTOOL = main_otool.c \
 				 print_otool.c	\
 				 print_arch.c	\
 				 singleton.c	\
-				 sort_nlist.c
+				 sort_nlist.c	\
+				 check_corrupted_file.c
 
 OBJ_PATH = ./obj/
 OBJ_NAME_NM = $(SRC_NAME_NM:.c=.o)
