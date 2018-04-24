@@ -82,13 +82,19 @@ int				handle_main(int ac, char **av, int is_nm)
 		if (ac > 2)
 			get_ac(1);
 		if ((ret += handle_file(av[i], &ptr, &st_size)))
+		{
+			get_arch_tab_printed(1, 1, 0);
+			is_ar(1, 0);
 			continue ;
+		}
 		ret += handle_arch(ptr, av[i], 0, is_nm);
 		if (i + 1 < ac)
 			ft_putendl("");
 		if (munmap(ptr, st_size) < 0)
 		{
 			ret += ft_error_ret("Error: munmap() failed", 1);
+			get_arch_tab_printed(1, 1, 0);
+			is_ar(1, 0);
 			continue ;
 		}
 		get_arch_tab_printed(1, 1, 0);
